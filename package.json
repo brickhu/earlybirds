@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy" : "npm run build && permaweb-deploy --ant-process ogjwnXKGHa5-5wInJJXyOoP779PrgvTFhYEIMZgvw14"
   },
   "dependencies": {
     "@arweave-wallet-kit/browser-wallet-strategy": "^0.1.1",
