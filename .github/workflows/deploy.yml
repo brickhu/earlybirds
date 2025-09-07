@@ -1,0 +1,36 @@
+name: Deploy Earlybirds to permaweb.
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: npm install
+      - run: npm run deploy
+        env:
+          env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          VITE_APP_NAME: Earlybirds
+          VITE_CHECKIN_PROCESS : pzN2Kn1vW0PFkS2f3DrLsZZU5bZTniPkbqa38_vMHow
+          VITE_CAPTCHA_PROCESS : Mf5ePcmz472mfXONzruUoOOkB9BGOVREoHmfX1K9l2w
+          VITE_ARTOKEN_PROCESS : Xjcy3A4Pcu9XSIBqdECbQ1Y25kartyonAgJqbkphdcU
+          VITE_WORM_PROCESS : L-Ddsx0YH4hLVfOgc51coHToe23dRatbVEQf5Q5dsow
+          VITE_BUYBACK_PROCESS : 7XhKLROZqK-m66Qg97IN3Uo1ei4MSqs-EcPcYTqQ4F8
+          VITE_GATEWAY_URL : https://arweave.net
+          VITE_GATEWAY : arweave.net
+          VITE_GQL_ENDPOINT : https://arweave-search.goldsky.com/graphql
+          VITE_MU_URL : https://mu.ao-testnet.xyz
+          VITE_CU_URL : https://cu.ao-testnet.xyz
+          VITE_SCHEDULER : _GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA
+          VITE_AO_LINK : https://www.ao.link
+          VITE_AO_MODULE : Do_Uc2Sju_ffp6Ev0AnLVdPtot15rvMjP-a9VVaA5fM
+          VITE_HYPERBEAM_URL : http://node.arweaveoasis.com:8734
+          VITE_APP_VERSION : 0.0.1
