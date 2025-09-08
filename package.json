@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy" : "npm run build && permaweb-deploy --ant-process a2sJ6aaXsXwTBFWTBC3BkLwpXCEUV8FEsFH0mNwXZRs"
+    "deploy": "npm run build && permaweb-deploy --ant-process a2sJ6aaXsXwTBFWTBC3BkLwpXCEUV8FEsFH0mNwXZRs"
   },
   "dependencies": {
     "@arweave-wallet-kit/browser-wallet-strategy": "^0.1.1",
@@ -22,11 +22,13 @@
     "@solidjs/router": "^0.15.3",
     "@tailwindcss/vite": "^4.1.11",
     "@vela-ventures/aosync-strategy": "^1.0.13",
+    "aocaptcha-sdk": "github:brickhu/aocaptcha-sdk",
     "arwallet-solid-kit": "github:brickhu/arwallet-solid-kit",
     "buffer": "^6.0.3",
     "daisyui": "^5.0.43",
     "dayjs": "^1.11.13",
     "generate-avatar": "^1.4.10",
+    "hbconnect": "github:brickhu/hbconnect",
     "html-to-image": "^1.11.13",
     "jr-qrcode": "^1.2.1",
     "ramda": "^0.31.3",
@@ -34,9 +36,7 @@
     "solid-js": "^1.9.7",
     "solid-qr-code": "^0.1.11",
     "solid-toast": "^0.5.0",
-    "tailwindcss": "^4.1.11",
-    "aocaptcha" : "~/Projects/aocaptcha",
-    "hbconnect" : "github:brickhu/hbconnect"
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "vite": "^7.0.0",

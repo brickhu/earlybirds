@@ -1,7 +1,6 @@
 import * as aoconnect  from "@permaweb/aoconnect/browser";
 import { arGql } from "./argql";
-import { createDataItemSigner } from "@permaweb/aoconnect/browser";
-import { createSigner,connect } from "@permaweb/aoconnect/browser";
+import { createSigner,connect,createDataItemSigner } from "@permaweb/aoconnect/browser";
 export const GQLUrls = {
   goldsky: 'https://arweave-search.goldsky.com/graphql' ,
   arweave: 'https://arweave.net/graphql',

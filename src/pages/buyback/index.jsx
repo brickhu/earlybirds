@@ -4,7 +4,7 @@ import { useWallet } from "arwallet-solid-kit";
 import { useGlobal } from "../../context";
 import { HB } from "hbconnect";
 import Timezonepicker from "../../components/timezonepicker";
-import { AoCaptcha } from "aocaptcha";
+import { AoCaptcha } from "aocaptcha-sdk";
 
 
 

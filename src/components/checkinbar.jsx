@@ -3,7 +3,7 @@ import { Switch, Match, createSignal, createEffect, batch, createResource } from
 import { useGlobal, useUser, useClock } from "../context"
 import { Icon } from "@iconify-icon/solid"
 import { useWallet } from "arwallet-solid-kit"
-import { AoCaptcha } from 'aocaptcha'
+import { AoCaptcha } from "aocaptcha-sdk"
 import Editable from "./editable"
 import { ColorPicker } from "./colorpicker"
 import { hexToHsl,hslToHex } from "../lib/color"
@@ -65,7 +65,7 @@ export default props => {
 
         const request = await captcha.request({
           Recipient : env.checkin_pid,
-          Type : "Checkin",
+          ['X-Request-Type'] : "Checkin",
           ['X-Note'] : greeting()||getARandomGreeting(),
           ['X-Color']:color()
         },wallet())

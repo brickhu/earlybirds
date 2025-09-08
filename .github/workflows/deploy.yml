@@ -19,8 +19,8 @@ jobs:
           env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
           VITE_APP_NAME: Earlybirds
-          VITE_CHECKIN_PROCESS : pzN2Kn1vW0PFkS2f3DrLsZZU5bZTniPkbqa38_vMHow
-          VITE_CAPTCHA_PROCESS : Mf5ePcmz472mfXONzruUoOOkB9BGOVREoHmfX1K9l2w
+          VITE_CHECKIN_PROCESS : nHUF1zKzb7c_wZEFr4W1reBPxKP_PkrH4wVU2nZA-Bw
+          VITE_CAPTCHA_PROCESS : SP22OUJOsSHVxHQEt3swog79gncGT8M-ehre7qzc68s
           VITE_ARTOKEN_PROCESS : Xjcy3A4Pcu9XSIBqdECbQ1Y25kartyonAgJqbkphdcU
           VITE_WORM_PROCESS : L-Ddsx0YH4hLVfOgc51coHToe23dRatbVEQf5Q5dsow
           VITE_BUYBACK_PROCESS : 7XhKLROZqK-m66Qg97IN3Uo1ei4MSqs-EcPcYTqQ4F8
