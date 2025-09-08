@@ -13,6 +13,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24.x
+
+       # 安装编译依赖（防止 lightningcss fallback 编译失败）
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential python3
+
+      # 强制重新安装依赖，保证 lightningcss 的二进制被下载
+      - name: Install dependencies
+        run: npm install --force --ignore-scripts=false
+
+      # Debug（可选，确认 lightningcss 的 .node 文件存在）
+      - name: Check lightningcss install
+        run: ls -R node_modules/lightningcss/node || true
+        
       - run: npm install
       - run: npm run deploy
         env:
