@@ -35,7 +35,7 @@ export default props => {
   const [style,setStyle] = createSignal()
   const [checkin,setCheckin] = createSignal()
 
-  const captcha = new AoCaptcha(env.captcha_pid,{})
+  const captcha = new AoCaptcha(env.captcha_pid,{tyoe:"Checkin"})
 
   const HandleSubmitCheckin = async()=>{
     try{
@@ -65,7 +65,7 @@ export default props => {
 
         const request = await captcha.request({
           Recipient : env.checkin_pid,
-          ['X-Request-Type'] : "Checkin",
+          ['Request-Type'] : "Checkin",
           ['X-Note'] : greeting()||getARandomGreeting(),
           ['X-Color']:color()
         },wallet())

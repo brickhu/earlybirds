@@ -38,6 +38,15 @@ export async function fetchFeeds([pid,{size,cursor}],{refetching}){
             },{
               name: "Action",
               values: ["Checked-In"]
+            },{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
             }]
         ) {
           edges {
@@ -95,6 +104,15 @@ export async function fetchFeedById(id,{refetching}){
             },{
               name: "Action",
               values: ["Checked-In"]
+            },{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
             }]
           ) {
             edges {
