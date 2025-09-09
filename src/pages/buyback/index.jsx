@@ -13,6 +13,20 @@ export default (props) => {
   const {wallet,address} = useWallet()
   const {env} = useGlobal()
 
+  const test = async function(){
+    let captcha = new AoCaptcha(env?.captcha_pid)
+    console.log('captcha: ', captcha);
+
+    const request = await captcha.request({
+          Recipient : env.checkin_pid,
+          ['Request-Type'] : "Checkin",
+          ['X-Note'] : "hi",
+          ['X-Color']: "#dddddd"
+        },wallet())
+
+    console.log(request)
+  }
+
   
   return(
     <div className="container">
@@ -30,6 +44,8 @@ export default (props) => {
       <h2 className="text-4xl py-4">Ongoing Devouring:</h2>
 
       <div>none</div>
+
+      <button onClick={test}>test</button>
 
       <Timezonepicker ref={_tzpicker}/>
     </div>

@@ -35,6 +35,7 @@ export default props => {
   const [style,setStyle] = createSignal()
   const [checkin,setCheckin] = createSignal()
 
+  
 
   const HandleSubmitCheckin = async()=>{
     try{
@@ -54,6 +55,8 @@ export default props => {
       console.log('start: ', start);
       let end = plan()?.next + 2*60*60*1000
       console.log('end: ', end);
+      const captcha = new AoCaptcha(env?.captcha_pid)
+      console.log('captcha: ', captcha);
       if(now>=start&&now<=end){
         // const request = await captcha.request("Checkin",wallet(),{['X-Note']:greeting()||getARandomGreeting(),['X-Color']:color()})
         // if(!request){throw("request failed")}
