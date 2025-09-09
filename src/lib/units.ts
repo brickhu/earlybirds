@@ -112,7 +112,7 @@ export function formatUTCOffsetString(offset : number){
 }
 
 export function formatOffsetHourToUTC(offset_h : number){
-  const sign = offset_h >= 0 ? "+" : "-";
+  const sign = offset_h > 0 ? "-" : "+";
   const absOffset = Math.abs(offset_h);
   return `UTC${sign}${absOffset}`
 }

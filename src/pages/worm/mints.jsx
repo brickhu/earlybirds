@@ -10,6 +10,16 @@ export default (props) => {
     <div className="w-full">
       <Show when={mints?.state=="ready"} fallback="loading...">
         {mints()?.length || "0"}
+        <For each={mints()}>
+          {item=><div>
+            <ul>
+               <div className="divider">{item?.id}</div>
+              <li>quantity:  {item?.quantity}</li>
+              <li>address:  {item?.address}</li>
+            </ul>
+           
+            </div>}
+        </For>
       </Show>
     </div>
   )

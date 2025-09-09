@@ -15,7 +15,7 @@ const modes = Object.freeze({
 export default props =>{
   let _ref_planner
 
-  const { timezones,timezone,offset,offsetInHour, zones, offsetHours } = useClock()
+  const { offset,offsetInHour, zones, offsetHours,setOffset } = useClock()
   const [mode,setMode] = createSignal(modes.CREATE)
   const [quantity,setQuantity] = createSignal(null)
   const [days,setDays] = createSignal(30)
@@ -23,7 +23,7 @@ export default props =>{
   const [currentPlan,setCurrentPlan] = createSignal()
   const [updating,setUpdating] = createSignal(false)
    // const [created,setCreated] = createSignal(false)
-  const {address,wallet,walletConnectionCheck} = useWallet()
+  const { wallet,walletConnectionCheck} = useWallet()
   const { arProcess,env,toast } = useGlobal()
   const { profile, refetchProfile,plan } = useUser()
 
@@ -47,6 +47,7 @@ export default props =>{
       console.log('q: ', q);
       const d = days()
       const _offset = profile()?.offset || offset()
+      // console.log('_offset: ', _offset);
       const tags = {
         Action: "Transfer",
         Recipient : env?.checkin_pid,
@@ -55,12 +56,13 @@ export default props =>{
         ["X-Duration"] : String(d),
         ['X-Offset'] : String(_offset)
       }
-      console.log('tags: ', tags);
+      // console.log('tags: ', tags);
       const data = ""
       const mid = await ao.message(env?.artoken_pid,tags,data)
       if(!mid) {throw("Transfer faild.") }
       console.log('mid: ', mid);
       const { Messages , Error } = await ao.result({process : env?.artoken_pid, message : mid})
+      console.log('Messages: ', Messages);
       if(Error){throw Error}
       if(Messages && Messages?.length == 2){
         await refetchProfile()
@@ -138,7 +140,7 @@ export default props =>{
   
   return(
     <ModalBox id="eb_planner" ref={_ref_planner} closable={!creating()} className="w-[360px]">
-      <ModalTitle>{mode() == modes.UPDATE? "Update your plan":"Create Check-in Plan" + timezone()?.offset}</ModalTitle>
+      <ModalTitle>{mode() == modes.UPDATE? "Update your plan":"Create Check-in Plan"}</ModalTitle>
       <ModalContent>
         <Switch>
             <Match when={mode()==modes.CREATE}>
@@ -161,9 +163,11 @@ export default props =>{
 
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Timezone</legend>
-                  <select className="select" disabled={creating()} onChange={(e)=>console.log(e.target.value)}>
+                  <select className="select" disabled={creating()} onChange={(e)=>{
+                    setOffset(e.target.value*60)
+                  }}>
                     <For each={offsetHours}>
-                      {item=><option value={item} selected={item == 8}>{zones()?.[item]?.text}</option>}
+                      {item=><option value={item} selected={item == offsetInHour()}>{zones()?.[item]?.text}</option>}
                     </For>
              
                   </select>

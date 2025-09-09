@@ -1,6 +1,5 @@
 import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match, ErrorBoundary, createSignal, createMemo,onCleanup} from "solid-js";
 import { displayZoneTime, formatUTCOffsetString, formatOffsetHourToUTC } from "../../lib/units";
-import timezones from "./timezone.json"
 const ClockContext = createContext()
 
 function getDateWithOffset(offsetMinutes,ts) {
@@ -45,13 +44,8 @@ export const ClockProvider = (props) => {
     return str
   }
 
-  const offsetToTimezone = function(offset){
-    return timezones.filter(timezone=>timezone.offset == -offset)
-  }
-
   const offsetString = createMemo(()=>formatUTCOffsetString(offset()))
   const offsetInHour = createMemo(()=>offset()/60)
-  const timezone = createMemo(()=>offsetToTimezone(offsetInHour()))
 
   const syncOffset = () => {
     setOffset(customOffset())
@@ -70,15 +64,11 @@ export const ClockProvider = (props) => {
   })
 
   const updateClock = () => {
-    // const d = getDateWithOffset(offset())
-    // const current_ts = d.getTime()
     const ts = Date.now()
     const {date,clock} = displayZoneTime(ts,offset())
     setTime(clock);
     setDate(date)
     setCountdown(ts-initial_timestamp)
-    // setTimestamp(current_ts)
-    // setUtcString(getUTCOffsetString(offset()))
     frameid = requestAnimationFrame(updateClock);
   };
 
@@ -105,11 +95,7 @@ export const ClockProvider = (props) => {
     getUTCOffsetString,
     offsetString,
     setOffset,
-    timezones,
-    timezone,
     offsetInHour,
-    offsetToTimezone,
-    // isSameDay : (ts1,ts2,of) => isSameDayWithOffset(ts1,ts2||timestamp(),of||offset()),
     getTheUserTimeByTimestamp : (ts) => {
        const d = getDateWithOffset(offset(),ts)
        return d.toLocaleTimeString('en-US',{
