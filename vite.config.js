@@ -10,7 +10,8 @@ export default defineConfig({
   },
   base:"./",
   build: {
-    cssMinify: "esbuild",
+    cssMinify: false,
+    minify: "esbuild",
     rollupOptions:{
       plugins: [visualizer({ open: false })],
       output: {
