@@ -58,12 +58,6 @@ export default props => {
       const captcha = new AoCaptcha(env?.captcha_pid)
       console.log('captcha: ', captcha);
       if(now>=start&&now<=end){
-        // const request = await captcha.request("Checkin",wallet(),{['X-Note']:greeting()||getARandomGreeting(),['X-Color']:color()})
-        // if(!request){throw("request failed")}
-        // console.log('request: ', request);
-        // const verified = await captcha.verify(request,wallet())
-        // if(!verified){throw("verified failed")}
-        // console.log('verified: ', verified);
 
         const request = await captcha.request({
           Recipient : env.checkin_pid,
