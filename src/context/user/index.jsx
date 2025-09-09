@@ -90,7 +90,8 @@ export const UserProvider = (props) => {
             <Show when={profile.state === "ready"} fallback={<div>Loading...</div>}>
               <Switch>
                  <Match when={!profile()}>
-                    not joined
+                  <div>not joined</div>
+                  <button className="btn btn-primary" onClick={handlePlan}>Create a plan</button>
                  </Match>
                  <Match when={profile()}>
                   <Show when={plan()} fallback="your don't have plan yet">
@@ -108,7 +109,9 @@ export const UserProvider = (props) => {
                   <Show when={!plan()}>
                     <button className="btn btn-primary" onClick={handlePlan}>Create a plan</button>
                   </Show>
+                  
                  </Match>
+                 
               </Switch>
              
               

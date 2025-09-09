@@ -23,13 +23,13 @@ export default props => {
     "h.conecting":"Connecting"
   })
   setDictionarys("zh",{
-    "nav.feeds": "动态",
-    "nav.buyback":"回购",
-    "nav.ranks":"排行",
+    "nav.feeds": "Feeds",
+    "nav.buyback":"Buyback",
+    "nav.ranks":"Ranks",
     "nav.worm": "$worm",
     "nav.docs":"Docs",
-    "h.connect":"連接",
-    "h.conecting":"連接中"
+    "h.connect":"Connect",
+    "h.conecting":"Connecting"
   })
   const [navs,setNavs] = createSignal([{
     name: "feeds",

@@ -22,7 +22,7 @@ const views = Object.freeze({
 export default props => {
   let _color_picker
   const {wallet, walletConnectionCheck,address} = useWallet()
-  const {time,date,getTheUserTimeByTimestamp} = useClock()
+  const {time,date} = useClock()
   const {env,toast,checkinProcess,getARandomGreeting,refetchCheckinState} = useGlobal()
   const {profile , refetchProfile , plan , latest, openPlanner, refetchArBalance, refetchWormBalance} = useUser()
   
@@ -35,7 +35,6 @@ export default props => {
   const [style,setStyle] = createSignal()
   const [checkin,setCheckin] = createSignal()
 
-  const captcha = new AoCaptcha(env.captcha_pid,{tyoe:"Checkin"})
 
   const HandleSubmitCheckin = async()=>{
     try{
