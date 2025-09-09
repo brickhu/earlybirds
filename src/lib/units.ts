@@ -111,6 +111,12 @@ export function formatUTCOffsetString(offset : number){
   return `GMT${sign}${offsetH}`
 }
 
+export function formatOffsetHourToUTC(offset_h : number){
+  const sign = offset_h >= 0 ? "+" : "-";
+  const absOffset = Math.abs(offset_h);
+  return `UTC${sign}${absOffset}`
+}
+
 
 export function getContrastYIQ(hexcolor){
     var r = parseInt(hexcolor.substr(1,2),16);

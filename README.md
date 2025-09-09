@@ -1,29 +1,29 @@
-## Usage
+# EarlyBirds
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+A decentralized check-in community permanently running on , helping you rise early and earn $WORM on-chain.
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## AO 进程信息
+- Process ID: `<你的进程ID>` （43字符）
+- Process Name: `<进程名称>`（如果有）
+- Network: ``
 
-## Available Scripts
+## 快速开始
+1. 如需环境变量：`cp .env.example .env`
+2. 启动：<你的命令>（例如 `npm i && npm run dev` 或 `docker-compose up -d`）
+3. 访问：<URL>（标注端口/路径）
+4. AO 交互：
+   - 使用 aos CLI: `aos <process-id>`
+   - 或通过 Web UI 发送消息
 
-In the project directory, you can run:
+## 演示
+- 在线：<https://earlybirds-day.vercel.app/>（可选）
+- 视频：<https://...>（≤3 分钟，二选一必填）
+- 测试账号/数据：<如适用>
+- AO 进程查看：<ao.link或其他查看器链接>
 
-### `npm run dev`
+## 已知限制
+- 简述当前限制或待办。
 
-Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-Learn more about deploying your application with the [documentations](https://vite.dev/guide/static-deploy.html)
-# earlybirds
+## 联系方式
+- GitHub: @brickhu
+- Wallet Address: `g9iwkhcCAtfa7vsLfVrZhtlPJvvd2KcwWx2zeqXkuSk`

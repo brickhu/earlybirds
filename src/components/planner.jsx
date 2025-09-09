@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, Match, onMount, Switch } from "solid-js"
-import { ModalBox,ModalTitle,ModalContent } from "./modal"
+import { ModalBox,ModalTitle,ModalContent,ModalAction } from "./modal"
 import { useWallet } from "arwallet-solid-kit";
 import { AO } from "../api";
 import { toBalanceQuantity } from "../lib/units";
@@ -15,7 +15,7 @@ const modes = Object.freeze({
 export default props =>{
   let _ref_planner
 
-  const { offsetString } = useClock()
+  const { timezones,timezone,offset,offsetInHour, zones, offsetHours } = useClock()
   const [mode,setMode] = createSignal(modes.CREATE)
   const [quantity,setQuantity] = createSignal(null)
   const [days,setDays] = createSignal(30)
@@ -26,16 +26,16 @@ export default props =>{
   const {address,wallet,walletConnectionCheck} = useWallet()
   const { arProcess,env,toast } = useGlobal()
   const { profile, refetchProfile,plan } = useUser()
-  const { offset } = useClock()
 
-  const average = createMemo(()=>{
+  const totalEarn = createMemo(()=>{
     if(quantity()<1||days()<30 || !quantity()){ return 0}
     const d = Number(days())
     const s = Number(d * quantity())
     const e = Number(quantity())
     const total = (s + e) * d / 2;
-    return total / d
+    return total
   })
+
 
   const HandleCreatePlan = async()=>{
     try {
@@ -130,30 +130,49 @@ export default props =>{
     })
   })
 
-  createEffect(()=>console.log(arProcess()))
+  createEffect(()=>{
+    console.log(zones())
+  })
+
+  // const tzs = createMemo(()=>Object.groupBy(timezones, ({ offset }) => offset))
   
   return(
-    <ModalBox id="eb_planner" ref={_ref_planner} closable={!creating()}>
-      <ModalTitle>{mode() == modes.UPDATE? "Update your plan":"Create a plan"}</ModalTitle>
+    <ModalBox id="eb_planner" ref={_ref_planner} closable={!creating()} className="w-[360px]">
+      <ModalTitle>{mode() == modes.UPDATE? "Update your plan":"Create Check-in Plan" + timezone()?.offset}</ModalTitle>
       <ModalContent>
         <Switch>
             <Match when={mode()==modes.CREATE}>
               <div>
-                <label className="input">
-                  <input type="text" className="grow" placeholder="" value={quantity()} disabled={creating()} onChange={(e)=>setQuantity(e.target.value)} />
-                  <span className=" text-current/50">$wAR</span>
-                </label>
-                <select defaultValue={days()} className="select" disabled={creating()} onChange={(e)=>setDays(e.target.value)}>
-                  <option value={30}>30 days</option>
-                  <option value={90}>90 days</option>
-                  <option value={365}>365 days</option>
-                </select>
-                <p>timezone: {offsetString()}</p>
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Fund</legend>
+                  <label className="input">
+                    <input type="text" className="grow" placeholder="" value={quantity()} disabled={creating()} onChange={(e)=>setQuantity(e.target.value)} />
+                    <span className=" text-current/50">$wAR</span>
+                  </label>
+                </fieldset>
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Duration</legend>
+                  <select defaultValue={days()} className="select" disabled={creating()} onChange={(e)=>setDays(e.target.value)}>
+                    <option value={30}>30 days</option>
+                    <option value={90}>90 days</option>
+                    <option value={365}>365 days</option>
+                  </select>
+                </fieldset>
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Timezone</legend>
+                  <select className="select" disabled={creating()} onChange={(e)=>console.log(e.target.value)}>
+                    <For each={offsetHours}>
+                      {item=><option value={item} selected={item == 8}>{zones()?.[item]?.text}</option>}
+                    </For>
+             
+                  </select>
+                </fieldset>
+                
+                {/* <p>timezone: {offsetString()}</p> */}
+                <div className="text-sm pt-4">Commit longer & fund higher to earn more $WORM per check-in. Finish the plan to reclaim your fund and unlock {totalEarn()} $WORM rewards.</div>
               </div>
-              <div >
-                <span>average : {average()}</span>
-                <button className="btn btn-primary" disabled={creating()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
-              </div>
+             
 
             </Match>
             <Match when={mode()==modes.UPDATE}>
@@ -174,6 +193,10 @@ export default props =>{
           </Switch>
        
       </ModalContent>
+      <ModalAction>
+        
+        <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+      </ModalAction>
     </ModalBox>
   )
 }

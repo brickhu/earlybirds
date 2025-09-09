@@ -1,5 +1,6 @@
 import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match, ErrorBoundary, createSignal, createMemo,onCleanup} from "solid-js";
-import { displayZoneTime, formatUTCOffsetString } from "../lib/units";
+import { displayZoneTime, formatUTCOffsetString, formatOffsetHourToUTC } from "../../lib/units";
+import timezones from "./timezone.json"
 const ClockContext = createContext()
 
 function getDateWithOffset(offsetMinutes,ts) {
@@ -22,10 +23,13 @@ function isSameDayWithOffset(timestamp1, timestamp2, offsetMinutes) {
 }
 
 
+
+
 export const ClockProvider = (props) => {
   let frameid
   let _clock_settings
   let initial_timestamp = new Date().getTime()
+  const offsetHours =  [0,1,2,3,4,4.5,5,5.5,5.75,6,6.5,7,8,9,9.5,10,11,12,13,-1,-2,-2.5,-3,-4,-4.5,-5,-6,-7,-8,-10,-11,-12]
   const [offset,setOffset] = createSignal(new Date().getTimezoneOffset())
   const [customOffset,setCustomOffset] = createSignal()
 
@@ -41,12 +45,29 @@ export const ClockProvider = (props) => {
     return str
   }
 
+  const offsetToTimezone = function(offset){
+    return timezones.filter(timezone=>timezone.offset == -offset)
+  }
+
   const offsetString = createMemo(()=>formatUTCOffsetString(offset()))
+  const offsetInHour = createMemo(()=>offset()/60)
+  const timezone = createMemo(()=>offsetToTimezone(offsetInHour()))
 
   const syncOffset = () => {
     setOffset(customOffset())
     _clock_settings.close()
   }
+
+  const zones = createMemo(()=>{
+    let details = {}
+    offsetHours.forEach(element => {
+      details[element] = {
+        hour : element,
+        text : formatOffsetHourToUTC(element)
+      }
+    });
+    return details
+  })
 
   const updateClock = () => {
     // const d = getDateWithOffset(offset())
@@ -67,6 +88,8 @@ export const ClockProvider = (props) => {
   });
 
   const hooks = {
+    offsetHours,
+    zones,
     offset,
     date,
     time,
@@ -82,6 +105,10 @@ export const ClockProvider = (props) => {
     getUTCOffsetString,
     offsetString,
     setOffset,
+    timezones,
+    timezone,
+    offsetInHour,
+    offsetToTimezone,
     // isSameDay : (ts1,ts2,of) => isSameDayWithOffset(ts1,ts2||timestamp(),of||offset()),
     getTheUserTimeByTimestamp : (ts) => {
        const d = getDateWithOffset(offset(),ts)
