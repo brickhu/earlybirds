@@ -31,7 +31,7 @@
     "ramda": "^0.31.3",
     "solid-color": "^0.0.5",
     "solid-qr-code": "^0.1.11",
-    "solid-toast": "^0.5.0",
+    "solid-toast": "^0.5.0"
   },
   "devDependencies": {
     "solid-js": "^1.9.7",
