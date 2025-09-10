@@ -102,7 +102,9 @@ export function displayZoneTime(timestamp:number, offset: number = 0){
 }
 
 
+export function displayUtcTime(timestamp){
 
+}
 
 export function formatUTCOffsetString(offset : number){
   const sign = offset >= 0 ? "-" : "+";

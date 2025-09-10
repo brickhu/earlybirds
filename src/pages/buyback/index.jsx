@@ -1,40 +1,42 @@
 
 // import {Ao} from "@permaweb/aoconnect/browser"
 import { useWallet } from "arwallet-solid-kit";
-import { useGlobal } from "../../context";
+import { useClock, useGlobal } from "../../context";
 import { useUser } from "../../context";
-import Timezonepicker from "../../components/timezonepicker";
-import { createSignal, Show } from "solid-js";
+import { createEffect, createResource, createSignal, Show } from "solid-js";
 import { Currency } from "../../components/currency";
-
+import { cacheResource } from "../../store";
+import { fetchState } from "../../api";
+import { AO } from "../../api";
+import Bid from "./bid";
 
 
 export default (props) => {
-  let _tzpicker
   const { wallet,address } = useWallet()
   const { env } = useGlobal()
-  const { wormBalance } = useUser()
-  const [quantity,setQuantity] = createSignal()
-  
+  const { getTheClockDatetime } = useClock()
+
+  const [buybackState,{refetch: refetchBuybackState}] = cacheResource("state_"+env.buyback_pid, ()=>createResource(()=>env.buyback_pid,fetchState))
+
   return(
     <div className="container">
-      <h1 className="text-4xl lg:text-7xl">Devour $WORMS. Gain Power. Earn Weekly Dividends.</h1>
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 container items-stretch py-12">
+        <div class="col-span-1 lg:col-span-8">
+          <h2 className=" text-4xl text-center lg:text-left lg:text-7xl uppercase font-black">Devour $WORMS. Earn Weekly Dividends.</h2>
+        </div>
+        <div class="col-span-1 lg:col-span-4 flex flex-col items-center lg:items-end gap-2 flex-1">
+          <Bid/>
+        </div>
+      </div>
 
-      <div className="py-8">Next distribution : 2025/09/10 , Estimated Dividends Available : 200.00 $wAR</div>
-      <div className="flex gap-2 items-center">
-         <label className="input">
-            <input type="text" className="grow" placeholder="" value={1} disabled={false} onChange={(e)=>setQuantity(e.target.value)} />
-            <span className=" text-current/50">$worm</span>
-          </label>
-        <button className="btn"> Devour</button>
-        <span>{<Show when={wormBalance?.state == "ready"} fallback="...">{<Currency value={wormBalance()} precision="12" fixed="6"/>}</Show>}</span>
+      <div className="divider"></div>
+
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 container items-stretch py-12">
+        <div class="col-span-full text-center">
+         Next distribution : <Show when={buybackState.state === "ready"} fallback="...">{getTheClockDatetime(buybackState()?.ts_distributed + 604800000)?.full}</Show> , Estimated Dividends Available : 200.00 $wAR
+        </div>
       </div>
       
-      <h2 className="text-4xl py-4">Ongoing Devouring:</h2>
-
-      <div>{quantity()}</div>
-
-      <Timezonepicker ref={_tzpicker}/>
     </div>
   )
 }

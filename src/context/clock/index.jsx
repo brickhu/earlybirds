@@ -105,6 +105,9 @@ export const ClockProvider = (props) => {
           second: '2-digit',
         })
     },
+    getTheClockDatetime : (ts) => {
+      return displayZoneTime(ts, offset())
+    },
     getDateWithOffset
   }
 

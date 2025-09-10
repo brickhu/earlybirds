@@ -21,6 +21,7 @@ export const UserProvider = (props) => {
   const [profile,{refetch:refetchProfile}] = createResource(()=>({pid:env?.checkin_pid,address:address()}) ,fetchUserProfile)
   const [arBalance,{refetch:refetchArBalance}] = createResource(()=>({pid: env?.artoken_pid, address: address()}), fetchBalance)
   const [wormBalance,{refetch:refetchWormBalance}] = createResource(()=>({pid: env?.wrom_pid, address: address()}), fetchBalance)
+  const [pwrBalance,{refetch:refetchPwrBalance}] = createResource(()=>({pid: env?.buyback_pid, address: address()}), fetchBalance)
   // const [plan,{refetch:refetchPlan}] = createResource(()=>({pid:env?.checkin_pid,key:profile()?.plan}) ,fetchPlan)
   const plan = createMemo(()=>profile?.state==="ready" && profile()?.plan_detail)
   const latest = createMemo(()=>profile?.state==="ready" && profile()?.latest_checkin)
@@ -40,7 +41,9 @@ export const UserProvider = (props) => {
     arBalance,
     refetchArBalance,
     wormBalance,
-    refetchWormBalance
+    refetchWormBalance,
+    pwrBalance,
+    refetchPwrBalance
   }
 
   createEffect(()=>{
