@@ -1,6 +1,6 @@
 import { createContext, useContext, createResource, createEffect, createMemo, createSignal, Switch, Show} from "solid-js";
 import { useWallet } from  "arwallet-solid-kit"
-import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan } from "../../api"
+import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan, fetchPlan } from "../../api"
 import { useGlobal,useClock } from "../index"
 import { Icon } from "@iconify-icon/solid"
 import Planner from "../../components/planner";
@@ -18,18 +18,17 @@ export const UserProvider = (props) => {
   const [show,setShow] = createSignal(false)
   // const [plan,setPlan] = createSignal()
 
-  const [profile,{refetch:refetchProfile}] = createResource(()=>({pid:env?.checkin_pid,address:address()}) ,hbFetchUserProfile)
+  const [profile,{refetch:refetchProfile}] = createResource(()=>({pid:env?.checkin_pid,address:address()}) ,fetchUserProfile)
   const [arBalance,{refetch:refetchArBalance}] = createResource(()=>({pid: env?.artoken_pid, address: address()}), fetchBalance)
-  const [wormBalance,{refetch:refetchWormBalance}] = createResource(()=>({pid: env?.wrom_pid, address: address()}), hbFetchBalance)
+  const [wormBalance,{refetch:refetchWormBalance}] = createResource(()=>({pid: env?.wrom_pid, address: address()}), fetchBalance)
+  // const [plan,{refetch:refetchPlan}] = createResource(()=>({pid:env?.checkin_pid,key:profile()?.plan}) ,fetchPlan)
   const plan = createMemo(()=>profile?.state==="ready" && profile()?.plan_detail)
   const latest = createMemo(()=>profile?.state==="ready" && profile()?.latest_checkin)
   
 
 
   const handlePlan = (plan) => {
-    const timeZones = Intl.supportedValuesOf("timeZone");
-    console.log('timezones: ', timeZones);
-    _planner?.show()
+    _planner?.show(plan)
   }
   const hooks = {
     id : address(),
@@ -37,7 +36,7 @@ export const UserProvider = (props) => {
     refetchProfile,
     latest,
     plan,
-    openPlanner : (plan) => handlePlan(plan),
+    openPlanner : (plan) => _planner?.show(plan),
     arBalance,
     refetchArBalance,
     wormBalance,

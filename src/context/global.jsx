@@ -1,6 +1,6 @@
 import { createContext, useContext, createResource, createSignal} from "solid-js";
 import toast, { Toaster } from 'solid-toast';
-import { fetchProcessInfo, hbFetchState } from "../api"
+import { fetchProcessInfo, hbFetchState,fetchState } from "../api"
 import { env } from "../store"
 import { ModalBox, ModalTitle } from "../components/modal";
 
@@ -30,7 +30,7 @@ export const GlobalProvider = (props) => {
   const [wormProcess,{refetch:refetchWormProcess}] = createResource(()=>env?.wrom_pid ,fetchProcessInfo)
   // const [captchaProcess,{refetch:refetchCaptchProcess}] = createResource(()=>env?.captcha_pid ,fetchProcessInfo)
 
-  const [checkinState,{refetch:refetchCheckinState}] = createResource(()=>env?.checkin_pid,hbFetchState)
+  const [checkinState,{refetch:refetchCheckinState}] = createResource(()=>env?.checkin_pid,fetchState)
   // const [style,setStyle] = createSignal()
 
   const hooks = {

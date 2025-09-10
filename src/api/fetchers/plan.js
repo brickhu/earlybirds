@@ -3,6 +3,7 @@ import { storage } from "../../lib/storage";
 
 
 import { fetchFeedById } from "./feeds";
+import { Table } from "../../components/table";
 
 /**
  * Retrieves the state associated with the given `pid` (agent ID).
@@ -22,12 +23,13 @@ import { fetchFeedById } from "./feeds";
  * 
  * @throws {Error} - Throws an error if an exception occurs during the fetch operation.
  */
-export const fetchState = (pid, { refetching, value }) => {
+export const fetchPlan = ({pid,key}, { refetching, value }) => {
   try {
-    console.log("fetchState", pid)
-    if (!pid) return;
+    console.log("fetchPlan", pid,key)
+   
+    if (!pid || !key) return;
     let ao = new AO()
-    return ao.dryrun(pid, { Action: "State" })
+    return ao.dryrun(pid, { Action: "Get", Table : "Plans", Key: key })
       .then(({ Messages }) => {
         if (Messages?.[0]?.Data) {
           return JSON.parse(Messages?.[0]?.Data)

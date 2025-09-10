@@ -2,13 +2,13 @@
 import { createResource, For } from "solid-js"
 import { useGlobal } from "../../context"
 import { cacheResource } from "../../store"
-import { hbFetchRanks } from "../../api"
+import { hbFetchRanks,fetchRanks } from "../../api"
 import { Table,Caption,Body,Row,Cell } from "../../components/table"
 import Avatar from "../../components/avatar"
 import { Currency } from "../../components/currency"
 export default (props) => {
   const { env } = useGlobal()
-  const [ranks,{refetch}] = cacheResource("ranks-"+env?.checkin_pid,()=>createResource(()=>env?.checkin_pid,hbFetchRanks))
+  const [ranks,{refetch}] = cacheResource("ranks-"+env?.checkin_pid,()=>createResource(()=>env?.checkin_pid,fetchRanks))
 
   return(
     <div className="min-h-full container">
