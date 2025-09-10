@@ -185,21 +185,34 @@ export default props =>{
                 <div>
                   pay 1 $war for upate,
                 </div>
-                <button 
-                  className="btn btn-primary" 
-                  onClick={()=>HandleUpdatePlan(currentPlan()?.id)}
-                  disabled={updating()}
-                >
-                  {updating()?"updating...":"update"}
-                </button>
+                
               </div>
             </Match>
           </Switch>
        
       </ModalContent>
       <ModalAction>
+        <Switch>
+          <Match when={mode()==modes.CREATE}>
+            <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+          </Match>
+          <Match when={mode()==modes.UPDATE}>
+            <div>1 $war</div>
+            <button 
+              className="btn btn-primary" 
+              onClick={()=>HandleUpdatePlan(currentPlan()?.id)}
+              disabled={updating()}
+              classList={{
+                "skeleton" : updating()
+              }}
+            >
+              {updating()?"Updating...":"Update"}
+            </button>
+          </Match>
+        </Switch>
         
-        <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+
+        
       </ModalAction>
     </ModalBox>
   )

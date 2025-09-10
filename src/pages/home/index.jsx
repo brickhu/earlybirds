@@ -74,11 +74,11 @@ export default () => {
         {/* status */}
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 container items-stretch py-8">
           <div class="col-span-1 lg:col-span-8">
-            <p className=" text-center lg:text-left text-current/60 lg:text-lg ">
+            <p className=" text-center lg:text-left text-current/60 lg:text-lg gap-2">
               
               <b class="text-base-content"><Show when={checkinState.state==="ready"} fallback="...">{checkinState()?.players}</Show></b> <span className='inline-flex'>Early Birds,</span> 
-              <b class="text-base-content"><Show  when={checkinState.state==="ready"} fallback="...">{checkinState()?.checkins}</Show></b> <span className='inline-flex'>total check-ins, and </span> 
-              <b class="text-base-content"><Show  when={checkinState.state==="ready"} fallback="..."><Currency value={checkinState()?.mints} precision={12} fixed={1}/></Show></b> <span className='inline-flex'>$worm circulating!</span>
+              <b class="text-base-content"><Show  when={checkinState.state==="ready"} fallback="...">{checkinState()?.checkins}</Show></b> <span className='inline-flex'>total check-ins, and  </span> 
+              <b class="text-base-content"><Show  when={checkinState.state==="ready"} fallback="..."> <Currency value={checkinState()?.mints} precision={12} fixed={1}/></Show></b> <span className='inline-flex'> $worm circulating!</span>
             </p>
           </div>
           <div class="col-span-1 lg:col-span-4 flex flex-col items-center lg:items-end gap-1 flex-1">

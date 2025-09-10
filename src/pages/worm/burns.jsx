@@ -1,7 +1,7 @@
 import { cacheResource } from "../../store"
 import { useGlobal, useClock } from "../../context"
 import { createEffect, createResource, Suspense } from "solid-js"
-import { fetchMints } from "../../api"
+import { fetchBurns } from "../../api"
 import { createPagination } from "../../store"
 import { Table, Body, Head, Row, Cell, Cols, Col, Caption, Actions } from "../../components/table"
 import { Shorter } from "../../components/shorter"
@@ -12,7 +12,7 @@ import Loadmore from "../../components/loadmore"
 export default (props) => {
   const {env} = useGlobal() 
   const { getTheClockDatetime } = useClock()
-  const [mints,{refetch:refetchMints, hasMore,loadingMore,loadMore}] = cacheResource("mints-"+env?.wrom_pid,()=>createPagination(()=>({from:env?.wrom_pid,to:env?.checkin_pid}),fetchMints,{size:100}))
+  const [mints,{refetch:refetchMints, hasMore,loadingMore,loadMore}] = cacheResource("burns-"+env?.wrom_pid,()=>createPagination(()=>({from:env?.wrom_pid,to:env?.checkin_pid}),fetchBurns,{size:100}))
   createEffect(()=>console.log(mints()))
   return(
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 items-stretch py-12">
