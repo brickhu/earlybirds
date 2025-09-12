@@ -1,5 +1,7 @@
 import { createContext, useContext, Suspense, createResource, createEffect, Switch, Match, ErrorBoundary, createSignal, createMemo,onCleanup} from "solid-js";
 import { displayZoneTime, formatUTCOffsetString, formatOffsetHourToUTC } from "../../lib/units";
+import { storage } from "../../lib/storage";
+import { useWallet } from "arwallet-solid-kit";
 const ClockContext = createContext()
 
 function getDateWithOffset(offsetMinutes,ts) {
@@ -29,8 +31,11 @@ export const ClockProvider = (props) => {
   let _clock_settings
   let initial_timestamp = new Date().getTime()
   const offsetHours =  [0,1,2,3,4,4.5,5,5.5,5.75,6,6.5,7,8,9,9.5,10,11,12,13,-1,-2,-2.5,-3,-4,-4.5,-5,-6,-7,-8,-10,-11,-12]
+  const { address } = useWallet()
+ 
   const [offset,setOffset] = createSignal(new Date().getTimezoneOffset())
   const [customOffset,setCustomOffset] = createSignal()
+  const [owner,setOwner] = createSignal()
 
   const [date,setDate] = createSignal(null)
   const [time,setTime] = createSignal("00:00:00")
@@ -46,9 +51,11 @@ export const ClockProvider = (props) => {
 
   const offsetString = createMemo(()=>formatUTCOffsetString(offset()))
   const offsetInHour = createMemo(()=>offset()/60)
+  const isSameTimeOffsetToSystem = createMemo(()=>offset()==new Date().getTimezoneOffset())
 
   const syncOffset = () => {
     setOffset(customOffset())
+    storage.set(`offset-${owner()}`,customOffset())
     _clock_settings.close()
   }
 
@@ -76,6 +83,15 @@ export const ClockProvider = (props) => {
     frameid = requestAnimationFrame(updateClock);
     onCleanup(() => cancelAnimationFrame(frameid));
   });
+  createEffect(()=>{
+    if(address()!=null){
+      const user_local_offset = storage.get(`offset-${address()}`)
+      if(user_local_offset) {
+        setOffset(user_local_offset)
+      }
+      setOwner(address())
+    }
+  })
 
   const hooks = {
     offsetHours,
@@ -85,13 +101,12 @@ export const ClockProvider = (props) => {
     time,
     countdown,
     timestamp,
-    changeTimeZone : (e)=> {
-      if(e&&e!=offset()){
-        setCustomOffset(e)
-        _clock_settings.showModal()
-      }
-      
+    displayTimeZoneSetting : (e)=>{
+      setCustomOffset(e?.offset)
+      setOwner(e?.owner)
+      _clock_settings.showModal()
     },
+
     getUTCOffsetString,
     offsetString,
     setOffset,
@@ -108,7 +123,8 @@ export const ClockProvider = (props) => {
     getTheClockDatetime : (ts) => {
       return displayZoneTime(ts, offset())
     },
-    getDateWithOffset
+    getDateWithOffset,
+    isSameTimeOffsetToSystem
   }
 
   return(

@@ -27,6 +27,7 @@ export default props =>{
   const [note,setNote] = createSignal()
   const [date,setDate] = createSignal()
   const [time,setTime] = createSignal()
+  const [mint,setMint] = createSignal()
   onMount(()=>{
     props?.ref({
       show:(e)=>{
@@ -38,6 +39,7 @@ export default props =>{
           setAddress(e?.recipient),
           setDate(e?.date),
           setTime(e?.time)
+          setMint(e?.mint)
         })
         
         _share.show()
@@ -52,10 +54,10 @@ export default props =>{
       <ModalTitle>Share</ModalTitle>
       <ModalContent>
         <div 
-          ref={_canvas} className=" aspect-[3/2] w-full rounded-xl p-4 flex flex-col justify-between items-start"
+          ref={_canvas} className=" aspect-[3/2] w-full rounded-xl p-4 flex flex-col justify-between items-start border"
           style={{
             "background" : background(),
-            "color" : textColor()
+            "color" : textColor(),
           }}
         >
           <div>
@@ -68,7 +70,7 @@ export default props =>{
 
           </div>
           <div className="flex items-end justify-between w-full">
-             <ul className="text-xs text-current/60">
+             <ul className="text-xs text-current/60 flex flex-col gap-1">
               <li className="flex items-center gap-2">
                 <Icon icon="iconoir:clock" />
                 <span>{time()}</span>
@@ -76,14 +78,22 @@ export default props =>{
    
               <li className="flex items-center gap-2">
                 <Icon icon="iconoir:coin" />
-                <Currency value={200000} precision={12} fixed={12} ticker="$WORM"/>
+                <Currency value={mint()} precision={12} fixed={12} ticker="$WORM"/>
               </li>
           </ul>
           <div>
-            <QRCodeSVG value={"https://earlybirds.com/#/checkin/"+id()} foregroundColor={textColor()} backgroundColor={background()} width={54} height={54}/>
-            {/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3.6 2.25A1.35 1.35 0 0 0 2.25 3.6v16.8c0 .746.604 1.35 1.35 1.35h16.8a1.35 1.35 0 0 0 1.35-1.35V3.6a1.35 1.35 0 0 0-1.35-1.35zm6.102 6.391a.75.75 0 1 0-1.06 1.06l4.376 4.377h-3.14a.75.75 0 0 0 0 1.5h4.95a.747.747 0 0 0 .75-.75v-4.95a.75.75 0 0 0-1.5 0v3.14z" clip-rule="evenodd"/></svg> */}
-            {/* <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" /> */}
-            {/* <Logo className="size-10" /> */}
+            <QRCodeSVG 
+              value={"https://earlybirds.day/#/checkin/"+id()} 
+              foregroundColor={textColor()} 
+              backgroundColor={background()} 
+              width={40} 
+              height={40}
+              imageSettings = {{
+                src : "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2048px-Octicons-mark-github.svg.png",
+                height : 10,
+                width : 10
+              }}
+            />
           </div>
 
           </div>

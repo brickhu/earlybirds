@@ -10,6 +10,7 @@ import { Shorter } from "../../components/shorter"
 import { getContrastYIQ,displayZoneTime } from "../../lib/units"
 import Share from "../../components/share";
 import Info from "../../components/info";
+import worm from "../worm";
 export default props => {
   let _share
   let _info
@@ -88,13 +89,15 @@ export default props => {
               <button 
                 className="btn btn-circle bg-[var(--color-fg)] text-[var(--color-bg)] border-[var(--color-fg)]"
                 onClick={()=>{
-
+                  const {date, time} = displayZoneTime(detail()?.time,detail()?.timezone || 0)
                   _share.show({
                     id : id,
                     background : detail()?.color || "#fefefe" ,
                     textColor : detail()?.color ? getContrastYIQ(detail()?.color) : "#ccc",
-                    date : detail()?.time && displayZoneTime(detail()?.time,detail()?.timezone || 0).date,
-                    time : detail()?.time && displayZoneTime(detail()?.time,detail()?.timezone || 0).time,
+                    date : date,
+                    time : time,
+                    note : detail()?.note,
+                    mint : detail()?.mint,
                     ...detail()
                   })
 

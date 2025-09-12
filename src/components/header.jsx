@@ -45,7 +45,7 @@ export default props => {
     path: "/ranks"
   },{
     name: "docs",
-    path: locale()=="en"?"https://docs.aolotto.com/en":"https://docs.aolotto.com/cn",
+    path: locale()=="en"?"https://docs.earlybirds.day/en":"https://docs.earlybirds.day/cn",
     new: true,
     out: true
   }])

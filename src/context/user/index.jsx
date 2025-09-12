@@ -7,6 +7,8 @@ import Planner from "../../components/planner";
 import { shortStr } from "../../lib/units";
 import { Copyable } from "../../components/copyable";
 import { Currency } from "../../components/currency";
+import { storage } from "../../lib/storage";
+import { Shorter } from "../../components/shorter";
 
 const UserContext = createContext()
 
@@ -14,7 +16,7 @@ export const UserProvider = (props) => {
   let _planner
   const {address, disconnect} = useWallet()
   const {env,toast} = useGlobal()
-  const {changeTimeZone,offset} = useClock()
+  const {displayTimeZoneSetting,offset} = useClock()
   const [show,setShow] = createSignal(false)
   // const [plan,setPlan] = createSignal()
 
@@ -48,10 +50,45 @@ export const UserProvider = (props) => {
 
   createEffect(()=>{
     if(profile.state == "ready"){
-      const user_offset = profile()?.plan?.offset || profile()?.offset
-      if(user_offset!==offset()){
-        changeTimeZone(user_offset)
+      const remote_offset = profile()?.plan_detail?.offset || profile()?.offset
+      if(remote_offset && remote_offset !== offset()){
+        displayTimeZoneSetting({offset: remote_offset,owner: address()})
       }
+      // const local_offset = storage.get(`offset-${address()}`) || new Date().getTimezoneOffset()
+      // // console.log('local_offset: ', local_offset);
+      // const user_offset = profile()?.plan?.offset || profile()?.offset
+      // // console.log('user_offset: ', user_offset);
+      // if(user_offset !== local_offset){
+      //   console.log("change offset " + user_offset)
+      //   // changeTimeZone({
+      //   //   address : address(),
+      //   //   offset : user_offset
+      //   // })
+      // }else{
+      //   setOffset(user_offset)
+      // }
+    }
+  })
+
+  createEffect(()=>{
+    if(address()){
+      toast.custom((t)=>(
+        <div 
+          className={`relative max-w-sm w-auto text-center bg-base-200 shadow-lg rounded-lg pointer-events-auto  overflow-hidden border border-current/10`}
+          classList={{
+            'animate-enter' : t.visible == true,
+            'animate-leave' : t.visible == false
+          }}
+        >
+          <p className="flex items-center px-4 py-2 gap-2 ">
+            <Icon icon="iconoir:link" /> <Shorter value={address()} length={6} /> <span>has been connected.</span>
+          </p>
+          
+          </div>
+      ),{
+        duration: 2000, 
+        unmountDelay: 200
+      })
     }
   })
 

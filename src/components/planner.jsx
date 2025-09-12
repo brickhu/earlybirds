@@ -46,7 +46,7 @@ export default props =>{
       const q = await toBalanceQuantity(quantity(),Number(arProcess()?.Denomination) || 12)
       console.log('q: ', q);
       const d = days()
-      const _offset = profile()?.offset || offset()
+      const _offset = offset() || profile()?.offset
       // console.log('_offset: ', _offset);
       const tags = {
         Action: "Transfer",

@@ -2,11 +2,11 @@ import { Icon } from "@iconify-icon/solid"
 export default props => {
   const links = [{
     label: "github",
-    url:"https://github.com/aolotto/aolotto",
+    url:"https://github.com/brickhu/earlybirds",
     logo: "carbon:logo-github"
   },{
     label: "twitter",
-    url:"https://x.com/aolotto_dao",
+    url:"https://x.com/earlybirds",
     logo: "carbon:logo-twitter"
   },{
     label: "discord",
@@ -14,11 +14,11 @@ export default props => {
     logo: "carbon:logo-discord"
   },{
     label:"telegram",
-    url:"https://t.me/aolotto",
+    url:"https://t.me/earlybirds",
     logo: "bxl:telegram"
   },{
     label:"youtube",
-    url:"https://www.youtube.com/@aolotto",
+    url:"https://www.youtube.com/@earlybirds",
     logo:"mdi:youtube"
   }]
 
