@@ -106,19 +106,17 @@ export function displayUtcTime(timestamp){
 
 }
 
-export function formatUTCOffsetString(offset : number){
-  const sign = offset >= 0 ? "-" : "+";
-  const absOffset = Math.abs(offset);
-  const offsetH = String(Math.floor(absOffset / 60))
-  return `GMT${sign}${offsetH}`
-}
 
 export function formatOffsetHourToUTC(offset_h : number){
   const sign = offset_h > 0 ? "-" : "+";
-  const absOffset = Math.abs(offset_h);
-  return `UTC${sign}${absOffset}`
+  const absOffsetH = Math.abs(offset_h);
+  return `UTC${sign}${String(absOffsetH)}`
 }
 
+
+export function formatUTCOffsetString(offset : number){
+  return formatOffsetHourToUTC(offset / 60)
+}
 
 export function getContrastYIQ(hexcolor){
     var r = parseInt(hexcolor.substr(1,2),16);

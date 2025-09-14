@@ -54,19 +54,6 @@ export const UserProvider = (props) => {
       if(remote_offset && remote_offset !== offset()){
         displayTimeZoneSetting({offset: remote_offset,owner: address()})
       }
-      // const local_offset = storage.get(`offset-${address()}`) || new Date().getTimezoneOffset()
-      // // console.log('local_offset: ', local_offset);
-      // const user_offset = profile()?.plan?.offset || profile()?.offset
-      // // console.log('user_offset: ', user_offset);
-      // if(user_offset !== local_offset){
-      //   console.log("change offset " + user_offset)
-      //   // changeTimeZone({
-      //   //   address : address(),
-      //   //   offset : user_offset
-      //   // })
-      // }else{
-      //   setOffset(user_offset)
-      // }
     }
   })
 

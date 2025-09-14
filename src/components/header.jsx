@@ -11,7 +11,7 @@ export default props => {
   let _header
   const { connected, address, connecting, showConnector } = useWallet()
   const { profile } = useUser()
-  const { offset,getUTCOffsetString,offsetString } = useClock()
+  const { offset,isSameTimeOffsetToSystem,offsetString } = useClock()
   const [sticked,setStickied] = createSignal(false)
   setDictionarys("en",{
     "nav.feeds": "Feeds",
@@ -72,7 +72,7 @@ export default props => {
         </A>
         
         {/* <div className="size-8 rounded-full bg-base-content"></div> */}
-        <p className="text-xs text-base-content/60">{offsetString()}</p>
+        <p className="text-xs text-base-content/60 flex items-center gap-1">{offsetString()} <Show when={!isSameTimeOffsetToSystem()}><Icon icon="iconoir:warning-triangle" className=" scale-75" /></Show></p>
       </div>
       <div className="flex items-center gap-2 px-2 justify-end">
         <div className=" flex-1 gap-1 lg:gap-2 items-center flex justify-end">
@@ -130,7 +130,8 @@ export default props => {
             className="btn btn-circle drawer-button rounded-full"
             classList={{
               "skeleton" : profile.loading,
-              "" : !profile.loading
+              "" : !profile.loading,
+              "border border-accent" : profile.state == "ready" && profile() !== null
             }}
           >
             <Avatar username={address()} className="size-6"/>

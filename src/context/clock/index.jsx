@@ -10,18 +10,18 @@ function getDateWithOffset(offsetMinutes,ts) {
   const targetTime = new Date(utcTime - offsetMinutes * 60000);
   return targetTime;
 }
-function isSameDayWithOffset(timestamp1, timestamp2, offsetMinutes) {
-  const offsetMs = offsetMinutes * 60 * 1000;
+// function isSameDayWithOffset(timestamp1, timestamp2, offsetMinutes) {
+//   const offsetMs = offsetMinutes * 60 * 1000;
 
-  const localTime1 = new Date(timestamp1 + offsetMs);
-  const localTime2 = new Date(timestamp2 + offsetMs);
+//   const localTime1 = new Date(timestamp1 + offsetMs);
+//   const localTime2 = new Date(timestamp2 + offsetMs);
 
-  return (
-    localTime1.getUTCFullYear() === localTime2.getUTCFullYear() &&
-    localTime1.getUTCMonth() === localTime2.getUTCMonth() &&
-    localTime1.getUTCDate() === localTime2.getUTCDate()
-  );
-}
+//   return (
+//     localTime1.getUTCFullYear() === localTime2.getUTCFullYear() &&
+//     localTime1.getUTCMonth() === localTime2.getUTCMonth() &&
+//     localTime1.getUTCDate() === localTime2.getUTCDate()
+//   );
+// }
 
 
 
