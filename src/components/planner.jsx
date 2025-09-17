@@ -146,7 +146,7 @@ export default props =>{
             <Match when={mode()==modes.CREATE}>
               <div>
                 <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Fund</legend>
+                  <legend className="fieldset-legend">Deposit</legend>
                   <label className="input">
                     <input type="text" className="grow" placeholder="" value={quantity()} disabled={creating()} onChange={(e)=>setQuantity(e.target.value)} />
                     <span className=" text-current/50">$wAR</span>
@@ -174,18 +174,21 @@ export default props =>{
                 </fieldset>
                 
                 {/* <p>timezone: {offsetString()}</p> */}
-                <div className="text-sm pt-4">Commit longer & fund higher to earn more $WORM per check-in. Finish the plan to reclaim your fund and unlock {totalEarn()} $WORM rewards.</div>
+                <div className="text-sm pt-4">Commit longer & deposit higher to earn more $WORM per check-in. Finish the plan to reclaim your deposit and unlock {totalEarn()} $WORM rewards.</div>
               </div>
              
 
             </Match>
             <Match when={mode()==modes.UPDATE}>
               <div>
-                <p>update plan : {currentPlan()?.id}, expired: {currentPlan()?.next + 57600000} / {new Date().getTime()}</p>
+                <p>You missed today’s check-in time, and your deposit is at risk of being forfeited! Add more deposit before 24:00 to reset the next check-in of your current plan to 6–8 AM tomorrow and avoid forfeiture.</p>
+                <div className="divider"></div>
                 <div>
-                  pay 1 $war for upate,
+                  <dl className="dl text-sm"><dt>Plan Id : </dt><dd>0xdfdf...dfdfdf</dd></dl>
+                  <dl className="dl text-sm"><dt>Start at : </dt><dd>2025/08/28 6:00</dd></dl>
+                  <dl className="dl text-sm"><dt>Deposit : </dt><dd>1 $wAR</dd></dl>
+                  <dl className="dl text-sm"><dt>Duration : </dt><dd>30 days</dd></dl>
                 </div>
-                
               </div>
             </Match>
           </Switch>
@@ -197,7 +200,8 @@ export default props =>{
             <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
           </Match>
           <Match when={mode()==modes.UPDATE}>
-            <div>1 $war</div>
+            <button className="btn">Update Plan</button>
+            {/* <div>Add a 1 $WAR deposit to update</div>
             <button 
               className="btn btn-primary" 
               onClick={()=>HandleUpdatePlan(currentPlan()?.id)}
@@ -207,7 +211,7 @@ export default props =>{
               }}
             >
               {updating()?"Updating...":"Update"}
-            </button>
+            </button> */}
           </Match>
         </Switch>
         

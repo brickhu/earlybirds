@@ -9,9 +9,10 @@ const formatMintData = (node)=>{
 
   return({
     id : node?.id,
-    address : tags?.['Mint-For'],
+    action : tags?.Action,
+    address : tags?.['Mint-For'] || tags?.['X-Burn-For'],
     quantity : tags?.Quantity,
-    message_id : tags?.['Message-Id'],
+    message_id : tags?.['Message-Id'] || tags?.['X-Bid-Id'],
     pushed_for : tags?.['Pushed-For'],
     timestamp : node?.block?.timestamp && node?.block?.timestamp * 1000
   })
@@ -29,7 +30,6 @@ export async function fetchMints([{from,to},{size,cursor}],{refetching}){
         query{
           transactions(
             first: ${size||100},
-            recipients:["${to}"],
             after: "${cursor?cursor:''}",
             tags: [{
               name: "Data-Protocol",
@@ -45,7 +45,7 @@ export async function fetchMints([{from,to},{size,cursor}],{refetching}){
               values: ["${from}"]
             },{
               name: "Action",
-              values: ["Minted"]
+              values: ["Minted","Burned"]
             }]
           ) {
             edges {

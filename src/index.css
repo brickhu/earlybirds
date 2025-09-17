@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -5,81 +6,88 @@
   include: button, badge, input, card, tooltip, kbd, radio, select, checkbox, alert, modal, divider, status, floating-label,label, join, join-item, dropdown, dropdown-content, range,validator,menu,stats,stat,navbar,glass,skeleton,hero, drawer,rootscrollgutter,divider,stack;
 }
 
+
+
+
 @plugin "daisyui/theme" {
-  name: "light";
-  default: false;
+  name: "earlybirds-light";
+  default: true;
   prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(98% 0 0);
-  --color-base-300: oklch(95% 0 0);
-  --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: oklch(45% 0.24 277.023);
-  --color-primary-content: oklch(93% 0.034 272.788);
-  --color-secondary: oklch(65% 0.241 354.308);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(77% 0.152 181.912);
-  --color-accent-content: oklch(38% 0.063 188.416);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
+  --color-base-200: oklch(98% 0.016 73.684);
+  --color-base-300: oklch(95% 0.038 75.164);
+  --color-base-content: oklch(14% 0.004 49.25);
+  --color-primary: oklch(66.29% 0.2272 35.97);
+  --color-primary-content: oklch(98% 0.016 73.684);
+  --color-secondary: oklch(67% 0.182 276.935);
+  --color-secondary-content: oklch(98% 0.019 200.873);
+  --color-accent: oklch(90% 0.076 70.697);
+  --color-accent-content: oklch(26% 0.007 34.298);
+  --color-neutral: oklch(26% 0.007 34.298);
+  --color-neutral-content: oklch(98% 0.016 73.684);
+  --color-info: oklch(62% 0.214 259.815);
+  --color-info-content: oklch(97% 0.014 254.604);
+  --color-success: oklch(76% 0.233 130.85);
+  --color-success-content: oklch(98% 0.031 120.757);
   --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
-  --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --color-warning-content: oklch(27% 0.077 45.635);
+  --color-error: oklch(63% 0.237 25.331);
+  --color-error-content: oklch(97% 0.013 17.38);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
+  --border: 2px;
   --depth: 1;
-  --noise: 0;
+  --noise: 1;
 }
+
+
+
 
 
 @plugin "daisyui/theme" {
-  name: "dark";
+  name: "earlybirds-dark";
   default: false;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(25.33% 0.016 252.42);
-  --color-base-200: oklch(23.26% 0.014 253.1);
-  --color-base-300: oklch(21.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(58% 0.233 277.117);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(65% 0.241 354.308);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(77% 0.152 181.912);
-  --color-accent-content: oklch(38% 0.063 188.416);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
+  --color-base-100: oklch(14% 0.005 285.823);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(37% 0.01 67.558);
+  --color-base-content: oklch(98% 0.016 73.684);
+  --color-primary: oklch(66.29% 0.2272 35.97);
+  --color-primary-content: oklch(98% 0.022 95.277);
+  --color-secondary: oklch(67% 0.182 276.935);
+  --color-secondary-content: oklch(96% 0.018 272.314);
+  --color-accent: oklch(90% 0.076 70.697);
+  --color-accent-content: oklch(26% 0.079 36.259);
+  --color-neutral: oklch(44% 0.011 73.639);
+  --color-neutral-content: oklch(98% 0.016 73.684);
+  --color-info: oklch(54% 0.245 262.881);
+  --color-info-content: oklch(98% 0.003 247.858);
+  --color-success: oklch(62% 0.194 149.214);
+  --color-success-content: oklch(98% 0.018 155.826);
   --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
-  --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --color-warning-content: oklch(27% 0.077 45.635);
+  --color-error: oklch(57% 0.245 27.325);
+  --color-error-content: oklch(97% 0.013 17.38);
+  --radius-selector: 0rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
   --depth: 1;
-  --noise: 0;
+  --noise: 1;
 }
 
 
+
 @thame {
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Poppins" , ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: "Poppins", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   
   --text-clamp-xl: 8rem;
@@ -92,7 +100,7 @@
 
 @layer base {
   body,#root{
-    @apply bg-base-100 text-base-content min-w-full min-h-screen box-border transition-all duration-200 ;
+    @apply bg-base-200 text-base-content min-w-full min-h-screen box-border transition-all duration-200 ;
   }
   .cols {
     @apply grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 md:grid-cols-10 md:gap-6 sm:grid-cols-6 sm:gap-4 grid-flow-dense overflow-x-auto ;
@@ -113,7 +121,17 @@
 
 @layer components {
   .card-text {
-  font-size: clamp(2rem, 4vw, 6rem);
-  line-height: 1.1;
+    font-size: clamp(2rem, 4vw, 6rem);
+    line-height: 1.1;
   }
+  .dl {
+    @apply flex items-center;
+    dt{
+      @apply text-current/60 min-w-[30%];
+    }
+    dd{
+      @apply flex-1
+    }
+  }
+
 }

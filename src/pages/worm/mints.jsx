@@ -1,6 +1,6 @@
 import { cacheResource } from "../../store"
 import { useGlobal, useClock } from "../../context"
-import { createEffect, createResource, Suspense } from "solid-js"
+import { createEffect, createResource, Match, Suspense, Switch } from "solid-js"
 import { fetchMints } from "../../api"
 import { createPagination } from "../../store"
 import { Table, Body, Head, Row, Cell, Cols, Col, Caption, Actions } from "../../components/table"
@@ -20,7 +20,7 @@ export default (props) => {
         <Suspense fallback="loading...">
           <Table>
             <Head>
-              <Col className="hidden lg:table-cell">Time</Col>
+              <Col className="hidden lg:table-cell">Type</Col>
               <Col>Address</Col>
               <Col>Quantity</Col>
               <Col className="text-right"><span className="p-4">TX</span></Col>
@@ -29,17 +29,22 @@ export default (props) => {
               <For each={mints()}>
                 {item=>(
                   <Row>
-                    <Cell className="hidden lg:table-cell">{getTheClockDatetime(item.timestamp).full}</Cell>
+                    <Cell className="hidden lg:table-cell">
+                      <Switch>
+                        <Match when={item.action == "Minted"}><div className="badge badge-soft badge-primary">Mint</div></Match>
+                        <Match when={item.action == "Burned"}><div className="badge badge-soft badge-secondary">Burn</div></Match>
+                      </Switch>
+                    </Cell>
                     <Cell><Shorter value={item.address} length={6}/></Cell>
                     <Cell><Currency value={item.quantity} precision={12} fixed={12} ticker="$WORM"></Currency></Cell>
                     <Cell className="text-right">
-                      <Shorter value={item.id} length={6} className="text-current/60 hidden lg:block"/> <A target="_blank" href={`https://www.ao.link/#/message/${item.id}`} className="btn btn-ghost rounded-full after:content-['_↗']"> </A>
+                      {getTheClockDatetime(item.timestamp).full} <A target="_blank" href={`https://www.ao.link/#/message/${item.id}`} className="btn btn-ghost rounded-full after:content-['_↗']"> </A>
                     </Cell>
                   </Row>
                 )}
               </For>
             </Body>
-            <Actions className=" ">
+            <Actions className="w-full flex items-center justify-end">
               <Show when={hasMore()}>
                 <Loadmore loadMore={loadMore} loading={loadingMore()} />
               </Show> 

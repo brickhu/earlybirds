@@ -107,6 +107,20 @@ export const UserProvider = (props) => {
                 </button>
               </div>
             </div>
+            <div className="flex items-center gap-2 justify-between">
+              <div className="bg-base-300 py-2 px-4">
+                <i className="text-sm uppercase text-current/60">Level</i>
+                <p className="text-lg font-bold">1.1</p>
+              </div>
+              <div className="bg-base-300">
+                <i className="text-sm uppercase text-current/60">Level</i>
+                <p className="text-lg font-bold">1.1</p>
+              </div>
+              <div className="bg-base-300">
+                <i className="text-sm uppercase text-current/60">Level</i>
+                <p className="text-lg font-bold">1.1</p>
+              </div>
+            </div>
             <div class="divider"></div>
             <div>
               <p>WAR : <Show when={arBalance?.state=="ready"} fallback="..."><Currency value={arBalance()} precision={12} fixed={6} ticker="$WAR"/></Show></p>

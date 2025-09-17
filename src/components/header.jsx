@@ -63,7 +63,7 @@ export default props => {
       className="min-h-12 w-full flex items-center justify-between sticky top-0 grow-0 shrink-0 transition-all z-10" 
       ref={_header}
       classList={{
-        "bg-base-100" : sticked()
+        "bg-base-200" : sticked()
       }}
     >
       <div className="flex items-center gap-2 px-2">
@@ -89,7 +89,7 @@ export default props => {
                   <A 
                     href={item()?.path} 
                     activeClass="text-base-content bold"
-                    inactiveClass="text-primary link link-hover"
+                    inactiveClass="text-secondary link link-hover"
                     class="inline-flex items-center gap-1 text-lg w-full justify-between"
                     classList={{
                       "after:content-['_↗']" : item()?.out
@@ -110,7 +110,7 @@ export default props => {
                 <A 
                   href={item()?.path} 
                   activeClass="text-base-content bold"
-                  inactiveClass="text-primary link link-hover"
+                  inactiveClass="text-secondary link link-hover"
                   class="inline-flex items-center gap-1 text-lg rounded-full"
                   classList={{
                       "after:content-['_↗']" : item()?.out

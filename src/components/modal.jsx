@@ -15,8 +15,8 @@ export const ModalBox = props => {
   })
 
   return(
-    <dialog id={props?.id} className="modal" ref={_modal} onCancel={(e)=>!props?.cancelable && e.preventDefault()}>
-      <div className={mergeClasses("modal-box",`${props?.class || props?.className}`)}>
+    <dialog id={props?.id} className="modal " ref={_modal} onCancel={(e)=>!props?.cancelable && e.preventDefault()}>
+      <div className={mergeClasses("modal-box border-base-300 border",`${props?.class || props?.className}`)}>
          <Show when={props?.closable}>
           <form method="dialog">
               <button className="btn btn-circle btn-ghost absolute right-2 top-2">✕</button>
