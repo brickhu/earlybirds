@@ -1,6 +1,6 @@
-import { createContext, useContext, createResource, createEffect, createMemo, createSignal, Switch, Show} from "solid-js";
+import { createContext, useContext, createResource, createEffect, createMemo, createSignal, Switch, Show, For, Match, Suspense} from "solid-js";
 import { useWallet } from  "arwallet-solid-kit"
-import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan, fetchPlan } from "../../api"
+import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan, fetchPlan, fetchUserActivites } from "../../api"
 import { useGlobal,useClock } from "../index"
 import { Icon } from "@iconify-icon/solid"
 import Planner from "../../components/planner";
@@ -9,11 +9,32 @@ import { Copyable } from "../../components/copyable";
 import { Currency } from "../../components/currency";
 import { storage } from "../../lib/storage";
 import { Shorter } from "../../components/shorter";
+import { Block, Blocks } from "../../components/blocks";
+import { BalanceItem } from "../../components/items";
+import { Table, Head, Cols, Col, Row, Cell, Body  } from "../../components/table";
+import Tabs from "../../components/tabs";
+import { Timelines, Timeline } from "../../components/timeline";
+import { createPagination } from "../../store";
+import { Moment } from "../../components/moment";
+import Activites from "./activites";
+import Assets from "./assets";
+
 
 const UserContext = createContext()
 
 export const UserProvider = (props) => {
   let _planner
+  const menus = [{
+    name : "Activites",
+    key : "activites"
+  },{
+    name : "Assets",
+    key : "assets"
+  },{
+    name : "Details",
+    key : "details"
+  }]
+  const [tab,setTab] = createSignal(menus[0])
   const {address, disconnect} = useWallet()
   const {env,toast} = useGlobal()
   const {displayTimeZoneSetting,offset} = useClock()
@@ -24,6 +45,7 @@ export const UserProvider = (props) => {
   const [arBalance,{refetch:refetchArBalance}] = createResource(()=>({pid: env?.artoken_pid, address: address()}), fetchBalance)
   const [wormBalance,{refetch:refetchWormBalance}] = createResource(()=>({pid: env?.wrom_pid, address: address()}), fetchBalance)
   const [pwrBalance,{refetch:refetchPwrBalance}] = createResource(()=>({pid: env?.buyback_pid, address: address()}), fetchBalance)
+  // const [activites,{refetch: refetchActivites,}] = createPagination(()=>({address:address(),checkin_pid:env?.checkin_pid}),fetchUserActivites,{size:100})
   // const [plan,{refetch:refetchPlan}] = createResource(()=>({pid:env?.checkin_pid,key:profile()?.plan}) ,fetchPlan)
   const plan = createMemo(()=>profile?.state==="ready" && profile()?.plan_detail)
   const latest = createMemo(()=>profile?.state==="ready" && profile()?.latest_checkin)
@@ -107,27 +129,86 @@ export const UserProvider = (props) => {
                 </button>
               </div>
             </div>
-            <div className="flex items-center gap-2 justify-between">
-              <div className="bg-base-300 py-2 px-4">
-                <i className="text-sm uppercase text-current/60">Level</i>
-                <p className="text-lg font-bold">1.1</p>
-              </div>
-              <div className="bg-base-300">
-                <i className="text-sm uppercase text-current/60">Level</i>
-                <p className="text-lg font-bold">1.1</p>
-              </div>
-              <div className="bg-base-300">
-                <i className="text-sm uppercase text-current/60">Level</i>
-                <p className="text-lg font-bold">1.1</p>
+            {/* calender */}
+            <div className=" pb-4">
+              <div className="divider text-current/60 text-xs">Feb 2025</div>
+              <div className="w-full grid grid-cols-7 gap-2">
+                <For each={["1","2","3","4","5","6","7"]}>
+                  {item=>{
+                    return(
+                      <div className=" flex items-center flex-col justify-center p-2 rounded-sm">
+                        <p className="text-xs text-current/50">SUN</p>
+                        <p>{item}</p>
+                      </div>
+                    )
+                  }}
+                </For>
               </div>
             </div>
-            <div class="divider"></div>
-            <div>
-              <p>WAR : <Show when={arBalance?.state=="ready"} fallback="..."><Currency value={arBalance()} precision={12} fixed={6} ticker="$WAR"/></Show></p>
-              <p>WORM : <Show when={wormBalance?.state=="ready"} fallback="..."><Currency value={wormBalance()} precision={12} fixed={6} ticker="$WORM"/></Show></p>
-            </div>
-            <div class="divider"></div>
-            <Show when={profile.state === "ready"} fallback={<div>Loading...</div>}>
+            {/* main */}
+            <Show when={profile.state == "ready"} fallback="Loading...">
+
+            <Blocks>
+              <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
+                <div className="flex gap-2 items-center">
+                  <div>
+                    <div
+                    className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
+                    style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
+                    
+                  </div>
+                  </div>
+                  <div className=" flex items-center text-sm">A 30-day plan starting on Sep 1, 2025, with a deposit of 1 $WAR</div>
+
+                </div>
+                <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
+              </div>
+              <Block label="Level" value={profile()?.level || "0"} />
+              <Block label="Boost" value={profile()?.boost || "0"}/>
+              <Block label="Check-ins" value={profile()?.checkins || "0"}/>
+              <Block  className="col-span-full py-4">
+                <Table className="text-xs">
+                  <Head>
+                    <Cols class="text-xs">
+                      <Col class="text-xs text-left">Fund</Col>
+                      <Col class="text-xs text-right">Available</Col>
+                      <Col class="text-xs text-right">Total</Col>
+                    </Cols>
+                  </Head>
+                  <Body className="text-xs">
+                    <Row>
+                      <Cell class="text-xs text-left">Deposit</Cell>
+                      <Cell class="text-xs text-right">0.0000001</Cell>
+                      <Cell class="text-xs text-right">0.0000001</Cell>
+                    </Row>
+                    <Row>
+                      <Cell class="text-xs text-left">Rewards</Cell>
+                      <Cell class="text-xs text-right">0.0000001</Cell>
+                      <Cell class="text-xs text-right">0.0000001</Cell>
+                    </Row>
+                  </Body>
+                </Table>
+                  <div className="flex items-center justify-between px-1 mt-3 pt-3 border-t border-base-300">
+                    <div>
+                      <p className="text-xs text-current/60 uppercase">Available to claim</p>
+                      <p className="text-sm"><Currency value={profile()?.funds?.[0] || 0} percision={12} ticker={"$WAR"}/></p>
+                    </div>
+                    <button className="btn btn-primary btn-sm " disabled={profile()?.funds?.[0] <= 0}>Claim</button>
+                  </div>
+              </Block>
+              
+            </Blocks>
+            
+            {/* <div className="grid grid-cols-3 gap-4">
+              <div className="bg-amber-50">1</div>
+              <div className="bg-amber-50">1</div>
+              <div className="bg-amber-50">1</div>
+              <div className="bg-amber-50">1</div>
+         
+            </div> */}
+            
+            
+            {/* <Show when={profile.state === "ready"} fallback={<div>Loading...</div>}>
               <Switch>
                  <Match when={!profile()}>
                   <div>not joined</div>
@@ -155,6 +236,61 @@ export const UserProvider = (props) => {
               </Switch>
              
               
+            </Show> */}
+            <section className="py-4">
+              <div className="pb-4">
+                <Tabs items={menus} current={tab()} size="lg" variant = "border" onSelected={({item})=>setTab(item)} />
+              </div>
+              <Suspense fallback="loading">
+                <Switch>
+                  <Match when={tab()?.key == "activites"}><Activites/></Match>
+                  <Match when={tab()?.key == "details"}>
+                    <div className="p-4 text-sm">
+                      <div className="text-current/50 text-center pb-4">TrnCnIGq...yNV6g2A</div>
+                      <div className="flex flex-col gap-2">
+                        <dl className="dl">
+                          <dt className="w-[40%]">Timezone</dt>
+                          <dd> UTC+08:00</dd>
+                        </dl>
+                        <dl className="dl">
+                          <dt className="w-[40%]">Join at</dt>
+                          <dd>Sep 18, 2025</dd>
+                        </dl>
+                        <dl className="dl">
+                          <dt className="w-[40%]">Punishies</dt>
+                          <dd>20.000000 $WAR</dd>
+                        </dl>
+                        <dl className="dl">
+                          <dt className="w-[40%]">Total earn</dt>
+                          <dd>20.000000 $WORM</dd>
+                        </dl>
+                      </div>
+                      
+                    </div>
+                  </Match>
+                  <Match when={tab()?.key == "assets"}><Assets/></Match>
+                </Switch>
+              </Suspense>
+              
+              {/* <ul className="timeline timeline-vertical timeline-compact w-full">
+                <li>
+                  <div className="timeline-middle">
+                    <p className="size-5 bg-base-300 rounded-full flex items-center justify-center">1</p>
+                  </div>
+                  <div className="timeline-end w-full">
+                    <div className="flex justify-between text-sm">
+                      <div className="pl-2">First Macintosh computer</div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-current/50 text-xs">5 mins ago</p>
+                        <button className="btn btn-ghost btn-circle btn-xs"></button>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <hr />
+                </li>
+              </ul> */}
+            </section>
             </Show>
           </div>
         </div>

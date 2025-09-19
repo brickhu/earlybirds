@@ -12,7 +12,7 @@ export const Currency = props => {
     }
   })
   return (
-    <div className="tooltip inline-block z-0"  data-tip={result()?.tooltip}>
+    <div className="tooltip inline-block z-0 tabular-nums"  data-tip={result()?.tooltip}>
       <span className={props?.class || props?.className}>{props?.symbol}{result()?.display}<Show when={props?.ticker}> {props?.ticker}</Show></span>
     </div>
   )
