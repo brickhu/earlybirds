@@ -18,6 +18,7 @@ import { createPagination } from "../../store";
 import { Moment } from "../../components/moment";
 import Activites from "./activites";
 import Assets from "./assets";
+import { displayZoneTime } from "../../lib/units";
 
 
 const UserContext = createContext()
@@ -49,6 +50,20 @@ export const UserProvider = (props) => {
   // const [plan,{refetch:refetchPlan}] = createResource(()=>({pid:env?.checkin_pid,key:profile()?.plan}) ,fetchPlan)
   const plan = createMemo(()=>profile?.state==="ready" && profile()?.plan_detail)
   const latest = createMemo(()=>profile?.state==="ready" && profile()?.latest_checkin)
+  const canlender = createMemo(()=>{
+    const weekdays = ["SUN","MON","TUE","WED","THU","FRI","SAT"]
+    const today = new Date();
+    const days = []
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(today.getDate() - i);
+      days.push(date);
+    }
+
+    return days.map((d)=>[d.getDate(),weekdays[d.getDay()]])
+
+    return [1,2,3,4,5,6,7]
+  })
   
 
 
@@ -133,12 +148,12 @@ export const UserProvider = (props) => {
             <div className=" pb-4">
               <div className="divider text-current/60 text-xs">Feb 2025</div>
               <div className="w-full grid grid-cols-7 gap-2">
-                <For each={["1","2","3","4","5","6","7"]}>
+                <For each={canlender()}>
                   {item=>{
                     return(
                       <div className=" flex items-center flex-col justify-center p-2 rounded-sm">
-                        <p className="text-xs text-current/50">SUN</p>
-                        <p>{item}</p>
+                        <p className="text-xs text-current/50">{item?.[1]}</p>
+                        <p>{item?.[0]}</p>
                       </div>
                     )
                   }}
@@ -150,18 +165,27 @@ export const UserProvider = (props) => {
 
             <Blocks>
               <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
-                <div className="flex gap-2 items-center">
-                  <div>
-                    <div
-                    className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
-                    style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
-                    
-                  </div>
-                  </div>
-                  <div className=" flex items-center text-sm">A 30-day plan starting on Sep 1, 2025, with a deposit of 1 $WAR</div>
+                <Switch>
+                  <Match when={profile()?.plan_detail}>
+                    <div className="flex gap-2 items-center">
+                      <div>
+                        <div
+                        className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
+                        style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
+                        
+                      </div>
+                      </div>
+                      <div className=" text-sm ">A {plan()?.duration}-day plan starting on {displayZoneTime(plan()?.start,plan()?.offset)?.date}, with a deposit of <span className=" inline-flex"><Currency value={plan().deposit} precision={12} fixed={0} ticker="$WAR"/></span></div>
 
-                </div>
-                <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
+                    </div>
+                    <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
+
+                  </Match>
+                  <Match when={!profile()?.plan_detail}>
+                    no plan
+                  </Match>
+                </Switch>
+                
               </div>
               <Block label="Level" value={profile()?.level || "0"} />
               <Block label="Boost" value={profile()?.boost || "0"}/>
@@ -178,22 +202,22 @@ export const UserProvider = (props) => {
                   <Body className="text-xs">
                     <Row>
                       <Cell class="text-xs text-left">Deposit</Cell>
-                      <Cell class="text-xs text-right">0.0000001</Cell>
-                      <Cell class="text-xs text-right">0.0000001</Cell>
+                      <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[0]} precision={12} /></Cell>
+                      <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
                     </Row>
                     <Row>
                       <Cell class="text-xs text-left">Rewards</Cell>
-                      <Cell class="text-xs text-right">0.0000001</Cell>
-                      <Cell class="text-xs text-right">0.0000001</Cell>
+                      <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
+                      <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
                     </Row>
                   </Body>
                 </Table>
                   <div className="flex items-center justify-between px-1 mt-3 pt-3 border-t border-base-300">
                     <div>
                       <p className="text-xs text-current/60 uppercase">Available to claim</p>
-                      <p className="text-sm"><Currency value={profile()?.funds?.[0] || 0} percision={12} ticker={"$WAR"}/></p>
+                      <p className="text-sm"><Currency value={profile()?.funds?.[0] + profile()?.rewards?.[0] || 0} percision={12} ticker={"$WAR"}/></p>
                     </div>
-                    <button className="btn btn-primary btn-sm " disabled={profile()?.funds?.[0] <= 0}>Claim</button>
+                    <button className="btn btn-primary btn-sm " disabled={profile()?.funds?.[0] + profile()?.rewards?.[0] <= 0}>Claim</button>
                   </div>
               </Block>
               
