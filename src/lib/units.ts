@@ -97,7 +97,8 @@ export function displayZoneTime(timestamp:number, offset: number = 0){
     time : `${hh_mm_ss} ${gmtOffset}`,
     full : `${months[month]} ${String(date).padStart(2,"0")} , ${year} ${String(hour).padStart(2,"0")}:${String(mins).padStart(2,"0")}:${String(seconds).padStart(2,"0")} ${gmtOffset}`,
     gmt : gmtOffset,
-    gmt_short : `GMT${sign}${offsetH}`
+    gmt_short : `GMT${sign}${offsetH}`,
+    month : `${months[month]}, ${year}`
   }
 }
 
@@ -120,4 +121,23 @@ export function getContrastYIQ(hexcolor){
     var b = parseInt(hexcolor.substr(5,2),16);
     var yiq = ((r*299)+(g*587)+(b*114))/1000;
     return (yiq >= 128) ? '#000000' : '#ffffff';
+}
+
+
+export function isSameDayWithOffset(timestamp1 : number, timestamp2 : number) {
+
+
+  const localTime1 = new Date(timestamp1);
+  const localTime2 = new Date(timestamp2);
+
+  return (
+    localTime1.getUTCFullYear() === localTime2.getUTCFullYear() &&
+    localTime1.getUTCMonth() === localTime2.getUTCMonth() &&
+    localTime1.getUTCDate() === localTime2.getUTCDate()
+  );
+}
+
+export function getDateKey(ts : number) {
+  const d = new Date(ts)
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`
 }

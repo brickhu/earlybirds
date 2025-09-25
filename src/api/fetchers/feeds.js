@@ -1,7 +1,7 @@
 import { HB } from "../index";
 import { storage } from "../../lib/storage";
 
-const formatCheckinData = (node)=>{
+const formatCheckinData = (node,cursor)=>{
   const tags = {}
   for (const {name,value} of node.tags) {
     tags[name] = value
@@ -16,9 +16,12 @@ const formatCheckinData = (node)=>{
     note : tags?.['Checkin-Note'],
     color : tags?.['Checkin-Color'],
     timezone : tags?.['Checkin-Time-Offset']&&Number(tags?.['Checkin-Time-Offset']),
-    plan : tags?.['Checkin-Plan']
+    plan : tags?.['Checkin-Plan'],
+    cursor
   })
 }
+
+
 
 export async function fetchFeeds([pid,{size,cursor}],{refetching}){
   console.log("fetching feeds",pid)
@@ -148,5 +151,140 @@ export async function fetchFeedById(id,{refetching}){
   } catch (error) {
     console.error('⛔ feftchFeedById: ', error);
     return null
+  }
+}
+
+
+export async function fetchUserFeeds([{pid,address},{size,cursor}],{refetching}){
+  console.log("fetching user feeds",pid,address)
+
+  if(!pid || !address) return null
+
+  
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          first: ${size||100},
+          after: "${cursor?cursor:''}",
+          recipients: ["${address}"],
+          tags: [{
+              name: "From-Process",
+              values: ["${pid}"]
+            },{
+              name: "Action",
+              values: ["Checked-In"]
+            },{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp,
+                height
+              }
+              recipient
+            }
+          }
+        }
+      }
+    `
+    let hb = new HB()
+    const res = await hb.query(query_str)
+    let feeds
+    if(res?.length > 0){
+      feeds = res.map(({node,cursor})=>{
+        return formatCheckinData(node,cursor)
+      })
+    }
+    
+    return feeds
+  } catch (error) {
+    console.error("fetch feeds faild.", error)
+    throw new Error(error)
+  }
+}
+
+
+
+export async function fetchUserEvents({pid,address},options){
+  console.log("fetchUserEvents",pid,address)
+
+  if(!pid || !address) return null
+
+  
+  try {
+    const query_str =  `
+      query{
+        transactions(
+          first: ${options?.size||100},
+          after: "${options?.cursor?options.cursor:''}",
+          recipients: ["${address}"],
+          tags: [{
+              name: "From-Process",
+              values: ["${pid}"]
+            },{
+              name: "Action",
+              values: ["Checked-In"]
+            },{
+              name: "Data-Protocol",
+              values: ["ao"]
+            },{
+              name: "Variant",
+              values: ["ao.TN.1"]
+            },{
+              name: "Type", 
+              values: ["Message"]
+            }]
+        ) {
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name,
+                value
+              }
+              block {
+                timestamp,
+                height
+              }
+              recipient
+            }
+          }
+        }
+      }
+    `
+    let hb = new HB()
+    const res = await hb.query(query_str)
+    console.log('res: ', res);
+    let feeds 
+    if(res?.length > 0){
+      feeds = res.map(({node,cursor})=>{
+        return formatCheckinData(node)
+      })
+    }
+    
+    return {
+      data : feeds,
+      cursor : res?.[0]?.cursor
+    }
+  } catch (error) {
+    console.error("fetch feeds faild.", error)
+    throw new Error(error)
   }
 }

@@ -5,6 +5,7 @@ import Avatar from "./avatar";
 import { Icon } from "@iconify-icon/solid";
 import { Currency } from "./currency";
 import { QRCodeSVG } from "solid-qr-code";
+import Logo from "./logo";
 
 
 function downloadDataURI(dataURI, filename) {
@@ -58,13 +59,19 @@ export default props =>{
           style={{
             "background" : background(),
             "color" : textColor(),
+            "--color-primary" : textColor()
           }}
         >
-          <div>
-            <p className="flex gap-2 items-center">
-              <Avatar username={address()} className="size-6"/>
-              {date()}
-            </p>
+          <div className="w-full">
+            <div className="flex gap-2 items-center w-full justify-between">
+              <p className="flex gap-2 items-center">
+                <Avatar username={address()} className="size-6"/>
+                {date()}
+              </p>
+              
+              
+              <Logo className="size-6"/>
+            </div>
             <p className="text-2xl py-2">{note()}</p>
            
 

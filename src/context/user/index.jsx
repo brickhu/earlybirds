@@ -1,6 +1,6 @@
 import { createContext, useContext, createResource, createEffect, createMemo, createSignal, Switch, Show, For, Match, Suspense} from "solid-js";
 import { useWallet } from  "arwallet-solid-kit"
-import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan, fetchPlan, fetchUserActivites } from "../../api"
+import { fetchUserProfile, fetchBalance,hbFetchUserProfile, hbFetchBalance, hbFetchPlan, fetchPlan, fetchUserActivites, fetchUserFeeds, fetchUserEvents } from "../../api"
 import { useGlobal,useClock } from "../index"
 import { Icon } from "@iconify-icon/solid"
 import Planner from "../../components/planner";
@@ -18,7 +18,11 @@ import { createPagination } from "../../store";
 import { Moment } from "../../components/moment";
 import Activites from "./activites";
 import Assets from "./assets";
-import { displayZoneTime } from "../../lib/units";
+import { displayZoneTime, getDateKey } from "../../lib/units";
+import Spinner from "../../components/spinner";
+import Canlender from "../../components/canlender";
+import { createStore } from "solid-js/store";
+import { getContrastYIQ } from "../../lib/units";
 
 
 const UserContext = createContext()
@@ -46,26 +50,23 @@ export const UserProvider = (props) => {
   const [arBalance,{refetch:refetchArBalance}] = createResource(()=>({pid: env?.artoken_pid, address: address()}), fetchBalance)
   const [wormBalance,{refetch:refetchWormBalance}] = createResource(()=>({pid: env?.wrom_pid, address: address()}), fetchBalance)
   const [pwrBalance,{refetch:refetchPwrBalance}] = createResource(()=>({pid: env?.buyback_pid, address: address()}), fetchBalance)
-  // const [activites,{refetch: refetchActivites,}] = createPagination(()=>({address:address(),checkin_pid:env?.checkin_pid}),fetchUserActivites,{size:100})
-  // const [plan,{refetch:refetchPlan}] = createResource(()=>({pid:env?.checkin_pid,key:profile()?.plan}) ,fetchPlan)
+  const [userEvents,{
+    hasMore: hasMoreEvents,
+    loadMore : loadMoreEvents,
+    refetch: refetchEvents,
+    loadingMore : loadingMoreEvents
+  }] = createPagination(()=>({pid:env?.checkin_pid,address:address()}),fetchUserFeeds,{size:100})
+
   const plan = createMemo(()=>profile?.state==="ready" && profile()?.plan_detail)
   const latest = createMemo(()=>profile?.state==="ready" && profile()?.latest_checkin)
-  const canlender = createMemo(()=>{
-    const weekdays = ["SUN","MON","TUE","WED","THU","FRI","SAT"]
-    const today = new Date();
-    const days = []
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(today.getDate() - i);
-      days.push(date);
-    }
 
-    return days.map((d)=>[d.getDate(),weekdays[d.getDay()]])
 
-    return [1,2,3,4,5,6,7]
-  })
   
-
+  const onCanlenderChange = (d) => {
+    if(hasMoreEvents()){
+      loadMoreEvents()
+    }
+  }
 
   const handlePlan = (plan) => {
     _planner?.show(plan)
@@ -116,6 +117,9 @@ export const UserProvider = (props) => {
     }
   })
 
+
+
+
   return(
      <UserContext.Provider value={hooks}>
       
@@ -146,176 +150,135 @@ export const UserProvider = (props) => {
             </div>
             {/* calender */}
             <div className=" pb-4">
-              <div className="divider text-current/60 text-xs">Feb 2025</div>
-              <div className="w-full grid grid-cols-7 gap-2">
-                <For each={canlender()}>
-                  {item=>{
-                    return(
-                      <div className=" flex items-center flex-col justify-center p-2 rounded-sm">
-                        <p className="text-xs text-current/50">{item?.[1]}</p>
-                        <p>{item?.[0]}</p>
-                      </div>
-                    )
-                  }}
-                </For>
-              </div>
+              <Canlender 
+                events={userEvents()?.map((i)=>({
+                  background : i?.color || "#fefefe" ,
+                  color : i?.color ? getContrastYIQ(i?.color) : "#ccc",
+                  text : i?.note || "",
+                  id : i?.cid,
+                  timestamp : i?.time
+                }))} 
+                onChange={onCanlenderChange}
+                loading={userEvents?.loading || loadingMoreEvents()}
+              />
+
             </div>
             {/* main */}
-            <Show when={profile.state == "ready"} fallback="Loading...">
-
-            <Blocks>
-              <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
-                <Switch>
-                  <Match when={profile()?.plan_detail}>
-                    <div className="flex gap-2 items-center">
-                      <div>
-                        <div
-                        className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
-                        style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
-                        
-                      </div>
-                      </div>
-                      <div className=" text-sm ">A {plan()?.duration}-day plan starting on {displayZoneTime(plan()?.start,plan()?.offset)?.date}, with a deposit of <span className=" inline-flex"><Currency value={plan().deposit} precision={12} fixed={0} ticker="$WAR"/></span></div>
-
-                    </div>
-                    <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
-
-                  </Match>
-                  <Match when={!profile()?.plan_detail}>
-                    no plan
-                  </Match>
-                </Switch>
-                
-              </div>
-              <Block label="Level" value={profile()?.level || "0"} />
-              <Block label="Boost" value={profile()?.boost || "0"}/>
-              <Block label="Check-ins" value={profile()?.checkins || "0"}/>
-              <Block  className="col-span-full py-4">
-                <Table className="text-xs">
-                  <Head>
-                    <Cols class="text-xs">
-                      <Col class="text-xs text-left">Fund</Col>
-                      <Col class="text-xs text-right">Available</Col>
-                      <Col class="text-xs text-right">Total</Col>
-                    </Cols>
-                  </Head>
-                  <Body className="text-xs">
-                    <Row>
-                      <Cell class="text-xs text-left">Deposit</Cell>
-                      <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[0]} precision={12} /></Cell>
-                      <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
-                    </Row>
-                    <Row>
-                      <Cell class="text-xs text-left">Rewards</Cell>
-                      <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
-                      <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
-                    </Row>
-                  </Body>
-                </Table>
-                  <div className="flex items-center justify-between px-1 mt-3 pt-3 border-t border-base-300">
-                    <div>
-                      <p className="text-xs text-current/60 uppercase">Available to claim</p>
-                      <p className="text-sm"><Currency value={profile()?.funds?.[0] + profile()?.rewards?.[0] || 0} percision={12} ticker={"$WAR"}/></p>
-                    </div>
-                    <button className="btn btn-primary btn-sm " disabled={profile()?.funds?.[0] + profile()?.rewards?.[0] <= 0}>Claim</button>
-                  </div>
-              </Block>
-              
-            </Blocks>
-            
-            {/* <div className="grid grid-cols-3 gap-4">
-              <div className="bg-amber-50">1</div>
-              <div className="bg-amber-50">1</div>
-              <div className="bg-amber-50">1</div>
-              <div className="bg-amber-50">1</div>
-         
-            </div> */}
-            
-            
-            {/* <Show when={profile.state === "ready"} fallback={<div>Loading...</div>}>
+            <Show when={profile.state == "ready"} fallback={<Spinner/>}>
               <Switch>
-                 <Match when={!profile()}>
-                  <div>not joined</div>
-                  <button className="btn btn-primary" onClick={handlePlan}>Create a plan</button>
-                 </Match>
-                 <Match when={profile()}>
-                  <Show when={plan()} fallback="your don't have plan yet">
-                    <div className="">
-                      <ul>
-                        <li>id : {plan()?.id}</li>
-                        <li>keepdays : {plan()?.keepdays}</li>
-                        <li>offset : {plan()?.offset}</li>
-                        <li>updated: {plan()?.updated}</li>
-                        <li>deposit : {plan()?.deposit}</li>
-                        <li>duration : {plan()?.duration}</li>
-                      </ul>
-                    </div>
-                  </Show>
-                  <Show when={!plan()}>
-                    <button className="btn btn-primary" onClick={handlePlan}>Create a plan</button>
-                  </Show>
-                  
-                 </Match>
-                 
-              </Switch>
-             
-              
-            </Show> */}
-            <section className="py-4">
-              <div className="pb-4">
-                <Tabs items={menus} current={tab()} size="lg" variant = "border" onSelected={({item})=>setTab(item)} />
-              </div>
-              <Suspense fallback="loading">
-                <Switch>
-                  <Match when={tab()?.key == "activites"}><Activites/></Match>
-                  <Match when={tab()?.key == "details"}>
-                    <div className="p-4 text-sm">
-                      <div className="text-current/50 text-center pb-4">TrnCnIGq...yNV6g2A</div>
-                      <div className="flex flex-col gap-2">
-                        <dl className="dl">
-                          <dt className="w-[40%]">Timezone</dt>
-                          <dd> UTC+08:00</dd>
-                        </dl>
-                        <dl className="dl">
-                          <dt className="w-[40%]">Join at</dt>
-                          <dd>Sep 18, 2025</dd>
-                        </dl>
-                        <dl className="dl">
-                          <dt className="w-[40%]">Punishies</dt>
-                          <dd>20.000000 $WAR</dd>
-                        </dl>
-                        <dl className="dl">
-                          <dt className="w-[40%]">Total earn</dt>
-                          <dd>20.000000 $WORM</dd>
-                        </dl>
-                      </div>
+                <Match when={profile()}>
+                  <Blocks>
+                    <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
+                      <Switch>
+                        <Match when={profile()?.plan_detail}>
+                          <div className="flex gap-2 items-center">
+                            <div>
+                              <div
+                              className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
+                              style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
+                              
+                            </div>
+                            </div>
+                            <div className=" text-sm ">A {plan()?.duration}-day plan starting on {displayZoneTime(plan()?.start,plan()?.offset)?.date}, with a deposit of <span className=" inline-flex"><Currency value={plan().deposit} precision={12} fixed={0} ticker="$WAR"/></span></div>
+
+                          </div>
+                          <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
+
+                        </Match>
+                        <Match when={!profile()?.plan_detail}>
+                          <div className="flex items-center justify-between w-full">
+                            <p>No active plan yet</p>
+                            <button className="btn btn-sm btn-primary">Create new</button>
+                          </div>
+                          
+                        </Match>
+                      </Switch>
                       
                     </div>
-                  </Match>
-                  <Match when={tab()?.key == "assets"}><Assets/></Match>
-                </Switch>
-              </Suspense>
-              
-              {/* <ul className="timeline timeline-vertical timeline-compact w-full">
-                <li>
-                  <div className="timeline-middle">
-                    <p className="size-5 bg-base-300 rounded-full flex items-center justify-center">1</p>
-                  </div>
-                  <div className="timeline-end w-full">
-                    <div className="flex justify-between text-sm">
-                      <div className="pl-2">First Macintosh computer</div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-current/50 text-xs">5 mins ago</p>
-                        <button className="btn btn-ghost btn-circle btn-xs"></button>
-                      </div>
-                    </div>
+                    <Block label="Level" value={profile()?.level || "0"} />
+                    <Block label="Boost" value={profile()?.boost || "0"}/>
+                    <Block label="Check-ins" value={profile()?.checkins || "0"}/>
+                    <Block  className="col-span-full py-4">
+                      <Table className="text-xs">
+                        <Head>
+                          <Cols class="text-xs">
+                            <Col class="text-xs text-left">Fund</Col>
+                            <Col class="text-xs text-right">Available</Col>
+                            <Col class="text-xs text-right">Total</Col>
+                          </Cols>
+                        </Head>
+                        <Body className="text-xs">
+                          <Row>
+                            <Cell class="text-xs text-left">Deposit</Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[0]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
+                          </Row>
+                          <Row>
+                            <Cell class="text-xs text-left">Rewards</Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
+                          </Row>
+                        </Body>
+                      </Table>
+                        <div className="flex items-center justify-between px-1 mt-3 pt-3 border-t border-base-300">
+                          <div>
+                            <p className="text-xs text-current/60 uppercase">Available to claim</p>
+                            <p className="text-sm"><Currency value={profile()?.funds?.[0] + profile()?.rewards?.[0] || 0} percision={12} ticker={"$WAR"}/></p>
+                          </div>
+                          <button className="btn btn-primary btn-sm " disabled={profile()?.funds?.[0] + profile()?.rewards?.[0] <= 0}>Claim</button>
+                        </div>
+                    </Block>
                     
+                  </Blocks>
+                  
+                  <section className="py-4">
+                    <div className="pb-4">
+                      <Tabs items={menus} current={tab()} size="lg" variant = "border" onSelected={({item})=>setTab(item)} />
+                    </div>
+                    <Suspense fallback="loading">
+                      <Switch>
+                        <Match when={tab()?.key == "activites"}><Activites/></Match>
+                        <Match when={tab()?.key == "details"}>
+                          <div className="p-4 text-sm">
+                            <div className="text-current/50 text-center pb-4">TrnCnIGq...yNV6g2A</div>
+                            <div className="flex flex-col gap-2">
+                              <dl className="dl">
+                                <dt className="w-[40%]">Timezone</dt>
+                                <dd> UTC+08:00</dd>
+                              </dl>
+                              <dl className="dl">
+                                <dt className="w-[40%]">Join at</dt>
+                                <dd>Sep 18, 2025</dd>
+                              </dl>
+                              <dl className="dl">
+                                <dt className="w-[40%]">Punishies</dt>
+                                <dd>20.000000 $WAR</dd>
+                              </dl>
+                              <dl className="dl">
+                                <dt className="w-[40%]">Total earn</dt>
+                                <dd>20.000000 $WORM</dd>
+                              </dl>
+                            </div>
+                            
+                          </div>
+                        </Match>
+                        <Match when={tab()?.key == "assets"}><Assets/></Match>
+                      </Switch>
+                    </Suspense>
+                    
+                  </section>
+                </Match>
+                <Match when={!profile()}>
+                  <div className="flex flex-col items-center gap-4 p-6 rounded-field bg-base-100 border border-base-300">
+                    <Icon icon="iconoir:circle-spark" />
+                    <p className="text-center">Not in EarlyBirds yet? Start a check-in plan and catch $WORM every day!</p>
+                    <button className="btn btn-primary" onClick={()=>handlePlan()}>Create a checkin plan</button>
                   </div>
-                  <hr />
-                </li>
-              </ul> */}
-            </section>
+                  
+                </Match>
+              </Switch>
             </Show>
+
           </div>
         </div>
       </div>

@@ -31,6 +31,7 @@ export const ClockProvider = (props) => {
   let _clock_settings
   let initial_timestamp = new Date().getTime()
   const offsetHours =  [0,1,2,3,4,4.5,5,5.5,5.75,6,6.5,7,8,9,9.5,10,11,12,13,-1,-2,-2.5,-3,-4,-4.5,-5,-6,-7,-8,-10,-11,-12]
+  const weekdays = ["SUN","MON","TUE","WED","THU","FRI","SAT"]
   const { address } = useWallet()
  
   const [offset,setOffset] = createSignal(new Date().getTimezoneOffset())
@@ -41,6 +42,7 @@ export const ClockProvider = (props) => {
   const [time,setTime] = createSignal("00:00:00")
   const [countdown,setCountdown] =  createSignal(0)
   const [timestamp,setTimestamp] = createSignal(initial_timestamp)
+  const [canlender,setCanlender] = createSignal()
 
   const getUTCOffsetString = (offset) => {
     const _offset = offset || 0
@@ -52,6 +54,19 @@ export const ClockProvider = (props) => {
   const offsetString = createMemo(()=>formatUTCOffsetString(offset()))
   const offsetInHour = createMemo(()=>offset()/60)
   const isSameTimeOffsetToSystem = createMemo(()=>offset()==new Date().getTimezoneOffset())
+  // const canlender = createMemo(()=>{
+  //   const weekdays = ["SUN","MON","TUE","WED","THU","FRI","SAT"]
+  //   const today = new Date(Date.now()+offset());
+  //   const days = []
+  //   for (let i = 6; i >= 0; i--) {
+  //     const date = new Date();
+  //     date.setDate(today.getDate() - i);
+  //     days.push(date);
+  //   }
+
+  //   return days.map((d)=>[d.getDate(),weekdays[d.getDay()],getDateKey(d.getTime())])
+
+  // })
 
   const syncOffset = () => {
     setOffset(customOffset())
@@ -92,6 +107,14 @@ export const ClockProvider = (props) => {
       setOwner(address())
     }
   })
+
+  createEffect(()=>{
+    const today = new Date(Date.now()+offset());
+    const days = []
+  })
+
+
+  
 
   const hooks = {
     offsetHours,

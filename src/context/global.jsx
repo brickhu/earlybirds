@@ -63,14 +63,14 @@ export const GlobalProvider = (props) => {
       </MetaProvider> */}
       {props?.children}
       <Toaster
-        position="top-center"
+        position="bottom-center"
         // Spacing between each toast in pixels
         gutter={8}
         containerClassName=""
         containerStyle={{}}
         toastOptions={{
           // Define default options that each toast will inherit. Will be overwritten by individual toast options
-          className: 'bg-base-100',
+          className: 'alert alert-info',
           duration: 5000,
         }}
       />

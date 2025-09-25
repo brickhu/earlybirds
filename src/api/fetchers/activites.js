@@ -71,6 +71,10 @@ export async function fetchUserActivites([{address,checkin_pid},{size,cursor}],{
     if(res?.length > 0){
       activites = res.map(({node,cursor})=>{
         return formatActivites(node,cursor)
+      }).sort((a,b)=>{
+        const ts_a = a.timestamp === 0 ? new Date().getTime() : a.timestamp
+        const ts_b = b.timestamp === 0 ? new Date().getTime() : b.timestamp
+        return ts_b - ts_a
       })
     }
     

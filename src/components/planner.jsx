@@ -2,8 +2,10 @@ import { createEffect, createMemo, createSignal, Match, onMount, Switch } from "
 import { ModalBox,ModalTitle,ModalContent,ModalAction } from "./modal"
 import { useWallet } from "arwallet-solid-kit";
 import { AO } from "../api";
-import { toBalanceQuantity } from "../lib/units";
+import { displayZoneTime, toBalanceQuantity } from "../lib/units";
 import { useGlobal,useClock,useUser } from "../context";
+import { Shorter } from "./shorter";
+import { Currency } from "./currency";
 
 
 
@@ -184,10 +186,10 @@ export default props =>{
                 <p>You missed today’s check-in time, and your deposit is at risk of being forfeited! Add more deposit before 24:00 to reset the next check-in of your current plan to 6–8 AM tomorrow and avoid forfeiture.</p>
                 <div className="divider"></div>
                 <div>
-                  <dl className="dl text-sm"><dt>Plan Id : </dt><dd>0xdfdf...dfdfdf</dd></dl>
-                  <dl className="dl text-sm"><dt>Start at : </dt><dd>2025/08/28 6:00</dd></dl>
-                  <dl className="dl text-sm"><dt>Deposit : </dt><dd>1 $wAR</dd></dl>
-                  <dl className="dl text-sm"><dt>Duration : </dt><dd>30 days</dd></dl>
+                  <dl className="dl text-sm"><dt>Plan Id : </dt><dd><Shorter value={plan()?.id} length={6}/></dd></dl>
+                  <dl className="dl text-sm"><dt>Start at : </dt><dd>{displayZoneTime(plan()?.start,plan()?.offset)?.full}</dd></dl>
+                  <dl className="dl text-sm"><dt>Deposit : </dt><dd><Currency value={plan()?.deposit} precision={12} ticker="$WAR"/></dd></dl>
+                  <dl className="dl text-sm"><dt>Duration : </dt><dd>{plan()?.duration} days</dd></dl>
                 </div>
               </div>
             </Match>
@@ -197,10 +199,25 @@ export default props =>{
       <ModalAction>
         <Switch>
           <Match when={mode()==modes.CREATE}>
-            <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+            <div className="w-full flex items-center justify-between">
+              <div>
+                <p className="text-xs text-current/60 uppercase">Balance</p>
+                <p><Currency value={0} precision={12} ticker="$WAR"/></p>
+              </div>
+              <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+            </div>
           </Match>
           <Match when={mode()==modes.UPDATE}>
-            <button className="btn">Update Plan</button>
+            <button 
+              className="btn btn-primary" 
+              onClick={()=>HandleUpdatePlan(currentPlan()?.id)}
+              disabled={updating()}
+              classList={{
+                "skeleton" : updating()
+              }}
+            >
+                {updating()?"Updating...":"Update"}
+            </button>
             {/* <div>Add a 1 $WAR deposit to update</div>
             <button 
               className="btn btn-primary" 

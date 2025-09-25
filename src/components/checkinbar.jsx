@@ -138,7 +138,14 @@ export default props => {
     
     if(address() && profile?.state === "ready" && profile()){
       let {latest_checkin} = profile()
-      if(!latest_checkin || typeof latest_checkin !== "object") return
+      if(!latest_checkin || typeof latest_checkin !== "object"){
+        batch(()=>{
+          setCheckin(null)
+          setColor(null)
+          setView(views.DEFAULT)
+          setChecked(false)
+        })
+      }
       let {timestamp,offset,color} = latest_checkin
       if(date() == displayZoneTime(timestamp,offset)?.date){
         batch(()=>{
