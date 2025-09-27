@@ -112,7 +112,6 @@ export const ClockProvider = (props) => {
     date,
     time,
     countdown,
-    timestamp,
     displayTimeZoneSetting : (e)=>{
       setCustomOffset(e?.offset)
       setOwner(e?.owner)
