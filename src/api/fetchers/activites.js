@@ -1,6 +1,4 @@
 import { HB } from "../index";
-import { storage } from "../../lib/storage";
-import { action } from "wao/utils";
 
 const formatActivites = (node,cursor)=>{
   const tags = {}
