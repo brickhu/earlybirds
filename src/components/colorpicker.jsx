@@ -3,11 +3,28 @@ import { ModalBox, ModalTitle, ModalContent } from "./modal";
 import { For, onMount } from "solid-js";
 import { Icon } from "@iconify-icon/solid";
 
+const makePalette = () => {
+  let palette = []
+  for (let index = 0; index < 24; index++) {
+    const h = 0 + index * 14
+    const s = 70 - index * 2
+    const l = 50
+    palette[index] = {h,s,l}
+  }
+  return palette
+}
+
+
+export function randomAColor(){
+  const randomNumber = Math.floor(Math.random() * 24)
+  const colors = makePalette()
+  return colors[randomNumber]
+}
+
 
 export function ColorPicker(props){
   let _color_picker
-  const s = 90
-  const l = 50
+
   onMount(()=>{
     props?.ref({
       show:(e)=>{
@@ -22,23 +39,21 @@ export function ColorPicker(props){
     <ModalTitle className="text-base-content">
       <div className="flex items-center gap-4 pb-4 text-base-content">
         <Icon icon="iconoir:fill-color" className="text-current/60" />
-        <span>Pick a color that reflects your day</span>
+        <span>Pick a color to fill your day</span>
       </div>
     </ModalTitle>
     <ModalContent>
       <ul className="grid grid-cols-6 gap-2 w-full">
-        <For each={new Array(24)}>
+        <For each={makePalette()}>
           {(item, index)=>{
-            const h = 0 + index() * 14
-            const s = 70 - index() * 2
-            const l = 50
+            const {h,s,l} = item
             return(<li className="col-span-1 flex items-center justify-center">
             <button 
               style={{"background" : `hsl(${h} ${s}% ${l}%)`}} 
               className=" block size-9 rounded-full ring-2 ring-transparent hover:ring-base-content btn"
               onClick={()=>{
                 if(props?.onChange){
-                  props.onChange([{h,s,l},`hsl(${h} ${s}% ${l}%)`])
+                  props.onChange([item,`hsl(${h} ${s}% ${l}%)`])
                 }
                 _color_picker.hide()
               }}

@@ -4,6 +4,7 @@ import Avatar from "./avatar"
 import { Icon } from "@iconify-icon/solid"
 import { displayZoneTime,  getContrastYIQ } from "../lib/units"
 
+
 import { Currency } from "./currency"
 export const CheckinCard = props => {
   const {color,note,mint,mid,recipient,time,timezone,cid} = mergeProps({note:""},props)

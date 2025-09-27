@@ -3,6 +3,7 @@ import toast, { Toaster } from 'solid-toast';
 import { fetchProcessInfo, hbFetchState,fetchState } from "../api"
 import { env } from "../store"
 import { ModalBox, ModalTitle } from "../components/modal";
+import { MetaProvider, Title, Style } from "@solidjs/meta";
 
 
 const GlobalContext = createContext()
@@ -31,7 +32,7 @@ export const GlobalProvider = (props) => {
   // const [captchaProcess,{refetch:refetchCaptchProcess}] = createResource(()=>env?.captcha_pid ,fetchProcessInfo)
 
   const [checkinState,{refetch:refetchCheckinState}] = createResource(()=>env?.checkin_pid,fetchState)
-  // const [style,setStyle] = createSignal()
+  const [style,setStyle] = createSignal()
 
   const hooks = {
     env,
@@ -43,6 +44,7 @@ export const GlobalProvider = (props) => {
     wormProcess,
     refetchWormProcess,
     setPageTitle,
+    setStyle,
     checkinState,
     refetchCheckinState,
     getARandomGreeting : (date) =>{
@@ -58,10 +60,12 @@ export const GlobalProvider = (props) => {
   }
   return(
     <GlobalContext.Provider value={hooks}>
-      {/* <MetaProvider>
-        <Title>{pageTitle()}</Title>
-      </MetaProvider> */}
-      {props?.children}
+
+      <div style={style()} className="transition-all">
+         {props?.children}
+      </div>
+     
+      
       <Toaster
         position="bottom-center"
         // Spacing between each toast in pixels

@@ -2,8 +2,6 @@ import {t,setDictionarys} from '../../i18n';
 import { Icon } from "@iconify-icon/solid"
 import Aologo from "../../components/aologo"
 import CheckinBar from "../../components/checkinbar"
-// import { checkinState,refetchCheckinState } from "../../store"
-// import { toBalanceValue } from "../../lib/units"
 import { batch, createEffect, createResource, For, onMount, Show } from 'solid-js';
 import { useGlobal } from '../../context';
 import { cacheResource } from '../../store';
@@ -15,12 +13,7 @@ import { FaqItem,FaqContainer } from './faq';
 
 
 
-const views = Object.freeze({
-  DEFAULT: 0,
-  PREVIEW: 1,
-  EDITING: 2,
-  CHECKED: 3
-});
+
 export default () => {
   const {env,checkinState, refetchCheckinState} = useGlobal()
   const [latestCheckers,{refetch: refetchLatestCheckers}] = cacheResource("latestCheckers",()=>createResource(()=>({pid:env?.checkin_pid,action: "LatestCheckers" }),fetchDataByAction))
@@ -49,10 +42,10 @@ export default () => {
     content : <p>content!</p>
   }]
 
-  createEffect(()=>console.log("checkinState()",checkinState()))
   return (
-
+    
     <main class=" flex flex-col items-center justify-center min-h-full">
+
       <div class="w-full flex flex-col gap-4 lg:gap-8 items-center justify-center " >
         {/* heading */}
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 container items-stretch py-12">

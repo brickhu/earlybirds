@@ -7,21 +7,16 @@ import Planner from "../../components/planner";
 import { shortStr } from "../../lib/units";
 import { Copyable } from "../../components/copyable";
 import { Currency } from "../../components/currency";
-import { storage } from "../../lib/storage";
 import { Shorter } from "../../components/shorter";
 import { Block, Blocks } from "../../components/blocks";
-import { BalanceItem } from "../../components/items";
 import { Table, Head, Cols, Col, Row, Cell, Body  } from "../../components/table";
 import Tabs from "../../components/tabs";
-import { Timelines, Timeline } from "../../components/timeline";
 import { createPagination } from "../../store";
-import { Moment } from "../../components/moment";
 import Activites from "./activites";
 import Assets from "./assets";
-import { displayZoneTime, getDateKey } from "../../lib/units";
+import { displayZoneTime } from "../../lib/units";
 import Spinner from "../../components/spinner";
 import Canlender from "../../components/canlender";
-import { createStore } from "solid-js/store";
 import { getContrastYIQ } from "../../lib/units";
 
 
@@ -171,18 +166,22 @@ export const UserProvider = (props) => {
                     <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
                       <Switch>
                         <Match when={profile()?.plan_detail}>
-                          <div className="flex gap-2 items-center">
-                            <div>
-                              <div
+                          <div className="flex gap-2 items-center w-full">
+                            <div className="size-8 bg-accent text-accent-content  flex items-center justify-center rounded-full">
+                              <Icon icon="ant-design:canlendar-twotone" />
+                              {/* <div
                               className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
                               style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
                               
+                            </div> */}
                             </div>
-                            </div>
-                            <div className=" text-sm ">A {plan()?.duration}-day plan starting on {displayZoneTime(plan()?.start,plan()?.offset)?.date}, with a deposit of <span className=" inline-flex"><Currency value={plan().deposit} precision={12} fixed={0} ticker="$WAR"/></span></div>
+                            <div className=" text-sm flex-1">20 days left</div>
 
                           </div>
-                          <button className="btn btn-ghost btn-circle"><Icon icon="fluent:more-vertical-16-filled" /></button>
+                          <div className="flex items-center justify-end">
+                            <button className="btn btn-ghost btn-circle btn-sm translate-x-1"><Icon icon="fluent:more-vertical-16-filled" /></button>
+                          </div>
+                          
 
                         </Match>
                         <Match when={!profile()?.plan_detail}>

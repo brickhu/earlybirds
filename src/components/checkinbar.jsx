@@ -7,101 +7,24 @@ import { AoCaptcha } from "aocaptcha-sdk"
 import Editable from "./editable"
 import { ColorPicker } from "./colorpicker"
 import { hexToHsl,hslToHex } from "../lib/color"
-import { getContrastYIQ, displayZoneTime } from "../lib/units"
+import { getContrastYIQ, displayZoneTime, toBalanceValue } from "../lib/units"
 import { A } from "@solidjs/router"
+import Checkineditor from "./checkineditor";
 
-
-
-const views = Object.freeze({
-  DEFAULT: 0,
-  PREVIEW: 1,
-  EDITING: 2,
-  CHECKED: 3
-});
 
 export default props => {
   let _color_picker
-  const {wallet, walletConnectionCheck,address} = useWallet()
+  let _checkineditor
+  const { walletConnectionCheck,address} = useWallet()
   const {time,date} = useClock()
-  const {env,toast,checkinProcess,getARandomGreeting,refetchCheckinState} = useGlobal()
+  const {toast,checkinProcess,setStyle} = useGlobal()
   const {profile , refetchProfile , plan , latest, openPlanner, refetchArBalance, refetchWormBalance} = useUser()
   
-  const [greeting, setGreeting ] = createSignal()
   const [color,setColor] = createSignal()
-  const [view,setView] = createSignal(views.DEFAULT)
-  const [posting,setPosting] = createSignal(false)
   const [checked,setChecked] = createSignal(false)
-  const [available,setAvailable] = createSignal(false)
-  const [style,setStyle] = createSignal()
   const [checkin,setCheckin] = createSignal()
 
   
-
-  const HandleSubmitCheckin = async()=>{
-    try{
-      setPosting(true)
-      let now = new Date().getTime()
-      console.log('now: ', now);
-      if(!address()) return
-      if(!plan()) {
-        console.log("Missed plan")
-        return
-      }
-      if(!plan()?.next) {
-        console.log("the plan is expired")
-        return
-      }
-      let start = plan()?.next
-      console.log('start: ', start);
-      let end = plan()?.next + 2*60*60*1000
-      console.log('end: ', end);
-      const captcha = new AoCaptcha(env?.captcha_pid)
-      console.log('captcha: ', captcha);
-      if(now>=start&&now<=end){
-
-        const request = await captcha.request({
-          Recipient : env.checkin_pid,
-          ['Request-Type'] : "Checkin",
-          ['X-Note'] : greeting()||getARandomGreeting(),
-          ['X-Color']:color()
-        },wallet())
-        if(!request){throw("request failed")}
-        console.log('request: ', request);
-        
-        const verified = await captcha.verify(request,wallet())
-        if(!verified){throw("verified failed")}
-        console.log('verified: ', verified);
-
-        await refetchProfile()
-        
-        let { latest_checkin } = await profile()
-        console.log('checkin: ', latest_checkin);
-        if(latest_checkin && typeof latest_checkin == "object" && latest_checkin?.id === request?.id){
-          let {color} = latest_checkin
-          batch(()=>{
-            setCheckin(latest_checkin)
-            setView(views.EDITING)
-            setChecked(true)
-            setColor(color?.length === 7?color:null)
-          })
-        }
-        
-        toast.success(`Successfully checked in and earned ${latest_checkin?.mint || 0} $WROM.`)
-        
-        if(props?.onCheckedSuccessful){
-          props?.onCheckedSuccessful(latest_checkin)
-        }
-      }else{
-        throw("Outside check-in time.")
-      } 
-    }catch(err){
-      console.error(err)
-      toast.error("Checked in Failed!")
-    }finally{
-      setPosting(false)
-    }
-  }
-
   const HandleEarlyCheckin = ()=>{
     if(!plan()) {
       console.log("missed plan")
@@ -119,85 +42,77 @@ export default props => {
         openPlanner(plan())
         return
       }
-      if(now>=start&&now<=end){
-        setAvailable(true)
-      }else{
-        setAvailable(false)
-      }
-      if(!greeting()){
-        const g = getARandomGreeting()
-        console.log("Greeting:",g)
-        setGreeting(g?.content || "Earlybirds catch the 🐛$worm")
-      }
-      
-      setView(views.EDITING)
+      _checkineditor.show()
     }
   }
 
   createEffect(async()=>{
-    
     if(address() && profile?.state === "ready" && profile()){
       let {latest_checkin} = profile()
       if(!latest_checkin || typeof latest_checkin !== "object"){
         batch(()=>{
           setCheckin(null)
           setColor(null)
-          setView(views.DEFAULT)
           setChecked(false)
         })
       }
       let {timestamp,offset,color} = latest_checkin
       if(date() == displayZoneTime(timestamp,offset)?.date){
+        console.log("checked!")
         batch(()=>{
           setCheckin(latest_checkin)
           setColor(color?.length === 7?color:null)
-          setView(views.EDITING)
           setChecked(true)
         })
       }else{
         batch(()=>{
           setCheckin(null)
           setColor(null)
-          setView(views.DEFAULT)
           setChecked(false)
         })
       }
-    }
-
-
-    
+    }    
   })
   createEffect((()=>{
     if(color()){
       const _color = color()
       const _constras_color = getContrastYIQ(_color)
       setStyle({
-        "--color-bg" : _color,
-        "--color-fg" : _constras_color
+        "--color-primary" : _color,
+        "--color-primary-content" : _constras_color
+      })
+    }else{
+      setStyle({
+        "--color-primary" : "",
+        "--color-primary-content" : ""
       })
     }
   }))
 
-
-  
   return(
+    <>
     <div 
-      style={style()}
-      class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-8 container mx-auto py-12  border-current/10 transition-all"
+      // style={style()}
+      class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-8 container mx-auto py-12  transition-all border-y"
       classList = {{
-        " bg-[var(--color-bg)] text-[var(--color-fg)] rounded-2xl border" : view()==views.EDITING,
-        "shadow-none border-y" : view()==views.DEFAULT || view()==views.CHECKED
+        "border-current/20" : !checked(),
+        "border-primary" : checked()
       }}
     >
+      <div class="col-span-1 lg:col-span-8 flex flex-col items-center justify-center lg:items-start">
+        <div class="text-xl text-current/60">{date()}</div>
+        <div class="text-4xl font-bold proportional-nums lining-nums slashed-zero">
+          <Show when={checked()} fallback={time()}>
+            <span className="text-primary">{displayZoneTime(checkin()?.timestamp,checkin()?.offset)?.clock}</span>
+          </Show>
+        </div>
+      </div>
+      
       <Switch>
-        <Match when={view()==views.DEFAULT}>
-          <div class="col-span-1 lg:col-span-8 flex flex-col items-center justify-center lg:items-start">
-            <div class="text-xl text-current/60">{date()}</div>
-            <div class="text-4xl font-bold proportional-nums lining-nums slashed-zero">{time()}</div>
-          </div>
+        <Match when={!checked()}>
           <div class="col-span-1 lg:col-span-4 flex flex-col lg:flex-row-reverse items-center justify-center lg:justify-start gap-4">
             <button 
-              class="btn btn-xl btn-primary w-[80%] lg:w-fit btn-neutral rounded-full" 
+              class="btn btn-xl btn-primary w-[80%] lg:w-fit rounded-full" 
               use:walletConnectionCheck={HandleEarlyCheckin} 
               disabled={profile.loading}
               classList={{"skeleton":profile.loading}}
@@ -207,62 +122,20 @@ export default props => {
             <div class="text-xs text-current/60 ">From {checkinProcess()?.['Checkin-Time-Range']?.[0]} to {checkinProcess()?.['Checkin-Time-Range']?.[2]} AM</div>
           </div>
         </Match>
-        <Match when={view()==views.EDITING}>
-          <div class="col-span-1 lg:col-span-8 flex flex-col items-center justify-center lg:items-start relative">
-            <div class="text-xl text-current/60">
-            <Switch>
-              <Match when={checked()&&checkin()}>
-                {displayZoneTime(checkin()?.timestamp,checkin()?.offset || 0).date}
-              </Match>
-              <Match when={!checked()}>{date()}</Match>
-            </Switch>
-              
-            </div>
-            <Switch>
-              <Match when={checked()&&checkin()}>
-                <div className="text-3xl lg:text-4xl slashed-zero  max-w-full">
-                  {checkin()?.note}
-                </div>
-              </Match>
-              <Match when={!checked()}>
-                <Editable maxLength={120} onChange={(val) => setGreeting(val)} className="text-3xl lg:text-4xl slashed-zero  max-w-full" placeholder="input" disabled={checked()} >{greeting()}</Editable>
-              </Match>
-            </Switch>
-            
-          </div>
-            
+        <Match when={profile?.state === "ready" && checked() && checkin()}>
           <div class="col-span-1 lg:col-span-4 flex flex-col lg:flex-row-reverse items-center justify-center lg:justify-start gap-4">
-            <Switch>
-              <Match when={checked()}>
-                <A href={"/checkin/"+latest()?.id} class="flex items-center gap-2">
-                  <Icon icon="iconoir:check-circle-solid" />
-                  <span className="text-sm">Checked in at {displayZoneTime(checkin()?.timestamp,checkin()?.offset|| 0).time}</span>
-                  <Icon icon="iconoir:arrow-right" />
-                </A>
-              </Match>
-              <Match when={!checked()}> 
-                <div class="flex items-center gap-2">
-                  <Show when={!available()}>
-                    <p className="text-xs">Not within check-in hours (From 6 to 8 AM)</p>
-                  </Show>
-                  <button class="btn btn-xl btn-circle  btn-neutral" disabled={posting()} onClick={()=>setView(views.DEFAULT)}> <Icon icon="iconoir:xmark" /></button>
-                  <Show when={available()}>
-                     <button class="btn btn-xl btn-circle btn-primary" disabled={posting()} use:walletConnectionCheck={HandleSubmitCheckin}> 
-                        {posting()?<Icon icon="line-md:loading-twotone-loop" />:<Icon icon="iconoir:check" /> }
-                      </button>
-                  </Show>
-                </div>
-
-                 <button className="btn btn-ghost btn-circle float right-0 top-2" onClick={()=>_color_picker.show()} disabled={posting()} ><Icon icon="iconoir:fill-color" /></button>
-              </Match>
-            </Switch>
+            <A href={`/checkin/${checkin()?.id}`} className="btn btn-xl btn-primary btn-circle">
+              <Icon icon="iconoir:check" />
+            </A>
+            <div className="text-xs text-current/60">Checked in</div>
           </div>
         </Match>
-        {/* <Match when={view()==views.CHECKED}>
-          checked-in today!
-        </Match> */}
       </Switch>
-      <ColorPicker 
+
+
+    
+    </div>
+    <ColorPicker 
         ref={_color_picker} onChange={e=>{
           if(e?.[0]){
             setColor(hslToHex(e?.[0]))
@@ -270,6 +143,21 @@ export default props => {
         }} 
         defaultValue={color()}
       />
-    </div>
+      <Checkineditor 
+        ref={_checkineditor}
+        address={address()}
+        date={date()}
+        onCheckedSuccessful={(checked)=>{
+          batch(()=>{
+            setChecked(true)
+            setCheckin(checked)
+          })
+          toast.success(`You’ve checked in and got ${toBalanceValue(checkin()?.mint,12)} $WORM!`)
+          if(props?.onCheckedSuccessful){
+            props.onCheckedSuccessful(checked)
+          }
+        }}
+      />
+    </>
   )
 }

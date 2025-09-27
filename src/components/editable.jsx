@@ -2,7 +2,7 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import mergeClasses from "@robit-dev/tailwindcss-class-combiner"
 
 function LimitedContentEditable(props) {
-  const maxLength = props.maxLength ?? 100;
+  const maxLength = props.maxLength ?? 140;
   const initialText = (props.children ?? "").toString().slice(0, maxLength);
   const [text, setText] = createSignal(initialText);
   const [isFocused, setIsFocused] = createSignal(false);

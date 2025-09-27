@@ -1,8 +1,7 @@
 import { createEffect, createMemo, createSignal, Match, Switch } from "solid-js";
 import { displayZoneTime } from "../lib/units";
 import { Icon } from "@iconify-icon/solid";
-import Spinner from "./spinner";
-import { createStore } from "solid-js/store";
+
 
 // 获取某月的日期区间（从该月第一天所在的周日，到该月最后一天所在的周六）
 function getMonthDays(currentMonth) {
@@ -31,9 +30,11 @@ function getMonthDays(currentMonth) {
 function getWeekDays(base){
   const start = new Date(base);
   start.setDate(base.getDate() - base.getDay()); // 本周周日
+  start.setHours(0, 0, 0, 0); // 设置为当天0点
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
+    d.setHours(0, 0, 0, 0); // 设置为当天0点
     return d;
   });
 }
@@ -102,7 +103,9 @@ export default props => {
       </div>
       <For each={view()=="month"?getMonthDays(currentMonth()) : getWeekDays(today)}>
         {(date)=>{
-          const ymd = date?.toISOString()?.split("T")?.[0]; // "YYYY-MM-DD"
+          console.log(date)
+          const ymd = new Date(date.getTime())?.toISOString()?.split("T")?.[0]; // "YYYY-MM-DD"
+          console.log('ymd: ', ymd);
           const isToday =
               date?.getDate() === today?.getDate() &&
               date?.getMonth() === today?.getMonth() &&
