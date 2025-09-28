@@ -6,6 +6,15 @@ import { useWallet } from "arwallet-solid-kit"
 import { useGlobal } from "../global"
 import { createPagination } from "../../store"
 import { fetchUserActivites } from "../../api"
+import { displayZoneTime } from "../../lib/units"
+
+const Skeleton = props => (
+  <div className="flex w-full flex-col gap-4">
+  <For each={Array.from({length:4})}>
+    {item=><div className="h-8 w-full skeleton rounded-2xl"></div>}
+  </For>
+  </div>
+)
 
 export default props=>{
   const {address} = useWallet()
@@ -14,7 +23,7 @@ export default props=>{
   return(
     <div className="py-4 px-2">
       <Timelines>
-        <For each={activites()} fallback="Loading...">
+        <For each={activites()} fallback={<Skeleton/>}>
           {item=>{
             let tags = item.tags
             let icon,id,text,time,action
@@ -44,10 +53,15 @@ export default props=>{
             )
           }}
         </For>
-        <li className="border-t border-base-300">
-          ddd
-        </li>
+         
+        
       </Timelines>
+      <Show when={props?.profile && props?.profile?.state=="ready"}>
+        <div className="border-t border-base-300 w-full text-xs text-current/50 py-4 px-2">
+          First joined on <Show when={props?.profile?.state=="ready"} fallback="...">{new Date(props?.profile()?.join_at).toDateString()}</Show>
+        </div>
+      </Show>
+     
     </div>
   )
 }

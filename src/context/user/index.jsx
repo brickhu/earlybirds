@@ -22,6 +22,14 @@ import { getContrastYIQ } from "../../lib/units";
 
 const UserContext = createContext()
 
+const Skeleton = props => (
+  <div className="flex w-full flex-col gap-4">
+  <For each={Array.from({length:4})}>
+    {item=><div className="h-8 w-full skeleton rounded-2xl"></div>}
+  </For>
+  </div>
+)
+
 export const UserProvider = (props) => {
   let _planner
   const menus = [{
@@ -159,28 +167,29 @@ export const UserProvider = (props) => {
 
             </div>
             {/* main */}
-            <Show when={profile.state == "ready"} fallback={<Spinner/>}>
+            <Show when={profile.state == "ready"} fallback={
+              <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4 justify-center"><Spinner/></div>
+            }>
               <Switch>
                 <Match when={profile()}>
                   <Blocks>
-                    <div className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4">
+                    <div 
+                      className="flex items-center gap-4 col-span-full bg-base-100 border-base-300 border rounded-field p-4"
+                      classList={{}}
+                    >
                       <Switch>
                         <Match when={profile()?.plan_detail}>
                           <div className="flex gap-2 items-center w-full">
-                            <div className="size-8 bg-accent text-accent-content  flex items-center justify-center rounded-full">
+                            <div className="size-6 bg-info text-info-content text-xs uppercase gap-2 flex items-center justify-center rounded-full">
                               <Icon icon="ant-design:canlendar-twotone" />
-                              {/* <div
-                              className="radial-progress bg-primary text-primary-content border-primary border-4 text-xs"
-                              style={{ "--value": 70, "--size":"2em", "--thickness": "3px" } } aria-valuenow={70} role="progressbar">
-                              
-                            </div> */}
                             </div>
-                            <div className=" text-sm flex-1">20 days left</div>
-
+                            <div className=" text-xs min-w-30"><Currency value={plan()?.deposit || 0} precision={12} ticker="$AO"/> <span className="text-current/50">backed plan</span></div>
+                            <div className="flex items-center justify-end gpa-2 flex-1 ">
+                              <span className="text-xs"> {plan()?.duration - plan()?.keepdays} days left </span>
+                              <button className="btn btn-ghost btn-circle btn-sm translate-x-1"><Icon icon="fluent:more-vertical-16-filled" /></button>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-end">
-                            <button className="btn btn-ghost btn-circle btn-sm translate-x-1"><Icon icon="fluent:more-vertical-16-filled" /></button>
-                          </div>
+                          
                           
 
                         </Match>
@@ -231,31 +240,42 @@ export const UserProvider = (props) => {
                   </Blocks>
                   
                   <section className="py-4">
-                    <div className="pb-4">
+                    <div className="pb-4 sticky">
                       <Tabs items={menus} current={tab()} size="lg" variant = "border" onSelected={({item})=>setTab(item)} />
                     </div>
-                    <Suspense fallback="loading">
+                    <Suspense fallback={<Skeleton/>}>
                       <Switch>
-                        <Match when={tab()?.key == "activites"}><Activites/></Match>
+                        <Match when={tab()?.key == "activites"}><Activites profile={profile}/></Match>
                         <Match when={tab()?.key == "details"}>
                           <div className="p-4 text-sm">
-                            <div className="text-current/50 text-center pb-4">TrnCnIGq...yNV6g2A</div>
                             <div className="flex flex-col gap-2">
                               <dl className="dl">
                                 <dt className="w-[40%]">Timezone</dt>
                                 <dd> UTC+08:00</dd>
                               </dl>
                               <dl className="dl">
-                                <dt className="w-[40%]">Join at</dt>
-                                <dd>Sep 18, 2025</dd>
+                                <dt className="w-[40%]">Joined</dt>
+                                <dd>{new Date(profile()?.join_at).toDateString()}</dd>
                               </dl>
                               <dl className="dl">
-                                <dt className="w-[40%]">Punishies</dt>
-                                <dd>20.000000 $WAR</dd>
+                                <dt className="w-[40%]">Plans</dt>
+                                <dd>5 → 120.00 $WAR</dd>
                               </dl>
                               <dl className="dl">
-                                <dt className="w-[40%]">Total earn</dt>
-                                <dd>20.000000 $WORM</dd>
+                                <dt className="w-[40%]">Rewards</dt>
+                                <dd>{} → 120.00 $WAR</dd>
+                              </dl>
+                              <dl className="dl">
+                                <dt className="w-[40%]">Penalty</dt>
+                                <dd>{profile()?.penalty || 0} → 120.00 $WAR</dd>
+                              </dl>
+                               <dl className="dl">
+                                <dt className="w-[40%]">Mints</dt>
+                                <dd>{profile()?.mints || 0} → <Currency value={profile()?.mint} precision={12} ticker="$WORM"/></dd>
+                              </dl>
+                              <dl className="dl">
+                                <dt className="w-[40%]">Claims</dt>
+                                <dd>{profile()?.claims || 0} → <Currency value={profile()?.claim || 0} precision={12} ticker="$AO"/></dd>
                               </dl>
                             </div>
                             

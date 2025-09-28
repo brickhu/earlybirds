@@ -1,4 +1,4 @@
-import { createSignal, onMount, createEffect, onCleanup,Show } from "solid-js"
+import { createSignal, onMount, createEffect, onCleanup,Show, batch } from "solid-js"
 import { Icon } from "@iconify-icon/solid"
 import { ColorPicker,randomAColor } from "./colorpicker"
 import { hexToHsl,getContrastYIQ,hslToHex } from "../lib/color"
@@ -10,9 +10,8 @@ import { storage } from "../lib/storage"
 import Spinner from "./spinner"
 
 const views = Object.freeze({
-  EDITING: 1,
-  CHECKED: 2,
-  FAILD: 3
+  DEFAULT: 1,
+  ERROR: 2,
 });
 
 
@@ -25,12 +24,15 @@ export default props => {
   const {plan, profile, refetchProfile} = useUser()
   const {timestamp} = useClock()
   const [visable,setVisable] = createSignal(false)
-  const [view,setView] = createSignal(views.EDITING)
   const [posting,setPosting] = createSignal(false)
   const [color,setColor] = createSignal("#8d4fff")
   const [style,setStyle] = createSignal()
   const [greeting, setGreeting ] = createSignal()
   const [isEditorFocused, setIsEditorFocused] = createSignal(false);
+  const [allowable,setAllowable] = createSignal(false)
+  const [view,setView] = createSignal(views.DEFAULT)
+  const [error,setError] = createSignal()
+
 
   const cacheUserCheckinTheme = (address,theme)=>{
     const key = `greeting_${address}`
@@ -124,21 +126,33 @@ export default props => {
         let { latest_checkin } = await profile()
         console.log('checkin: ', latest_checkin);
 
+        
 
         if(latest_checkin){
+          batch(()=>{
+            setAllowable(false)
+            setVisable(false)
+            setIsEditorFocused(false)
+            setView(views.DEFAULT)
+            setError(null)
+          })
           clearCachedUserCheckinTheme(address())
+          if(props?.onCheckedSuccessful){
+            props?.onCheckedSuccessful(latest_checkin)
+          }
+        }else{
+          throw("Check-in Faild.")
         }
         
-        if(props?.onCheckedSuccessful){
-          props?.onCheckedSuccessful(latest_checkin)
-        }
-        _color_picker.hide()
+        
+        
       }else{
-        throw("Outside check-in time.")
+        throw("Not within check-in hours")
       } 
     }catch(err){
       console.error(err)
-      toast.error("Checked in Failed!")
+      setView(views.ERROR)
+      setError("Check-in Faild")
     }finally{
       setPosting(false)
     }
@@ -150,11 +164,22 @@ export default props => {
     console.log('cached: ', cached);
     const g = cached?.greeting || getARandomGreeting()?.content
     const c = cached?.color || hslToHex(randomAColor())
-    setGreeting(g || "Earlybirds catch the 🐛$worm")
     _editor.innerText = g
-    setColor(c)
-    setView(views.EDITING)
-    setVisable(true)
+    batch(()=>{
+      setGreeting(g || "Earlybirds catch the 🐛$worm")
+      setColor(c)
+      setVisable(true)
+      setView(views.DEFAULT)
+      setError(null)
+    })
+    
+    if(plan()?.next){
+      const now = timestamp()
+      const start = plan()?.next 
+      const end = plan()?.next + 7200000
+      setAllowable(now>=start&&now<=end)
+    }
+    
 
   }
 
@@ -166,9 +191,15 @@ export default props => {
         color : color()
       })
     }
-    setIsEditorFocused(false)
-    setGreeting(null)
-    setVisable(false)
+    batch(()=>{
+      setIsEditorFocused(false)
+      setGreeting(null)
+      setVisable(false)
+      setAllowable(false)
+      setView(views.DEFAULT)
+      setError(null)
+    })
+   
   }
 
   onMount(()=>{
@@ -250,14 +281,14 @@ export default props => {
                   updateText()
               }}
             >
-              <Show when={isEditorFocused()} fallback={<Icon icon="lets-icons:sort-random-light" />}><Icon icon="iconoir:edit-pencil" /> </Show>
+              <Show when={isEditorFocused()} fallback={<Icon icon="lets-icons:sort-random-light" />}><Icon icon="iconoir:edit-pencil" className="text-[var(--color-fg)]"/> </Show>
               
             </button>
             <div className="divider divider-horizontal"></div>
             <div className="text-current/50 text-sm">{greeting()?.length || 0}/{maxLength} <Show when={greeting()?.length > maxLength || greeting()?.length <= 1}> <Icon icon="bxs:error" /></Show></div>
           </div>
           <div>
-            <Show when={timestamp()>=(plan()?.next)&&timestamp()<=(plan()?.next + 7200000)&&!posting()} fallback={<span>Not within check-in hours(6-8 AM)</span>}>
+            <Show when={allowable()} fallback={<span>Not within check-in hours(6-8 AM)</span>}>
               <button 
                 className="btn btn-circle bg-[var(--color-fg)] border-[var(--color-fg)] disabled:border-transparent text-[var(--color-bg))] btn-lg"
                 disabled={posting() || greeting()?.length <= 1 || greeting()?.length > maxLength || isEditorFocused()}

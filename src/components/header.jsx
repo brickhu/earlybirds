@@ -89,8 +89,8 @@ export default props => {
                   <A 
                     href={item()?.path} 
                     activeClass="text-base-content bold"
-                    inactiveClass="text-secondary link link-hover"
-                    class="inline-flex items-center gap-1 text-lg w-full justify-between"
+                    inactiveClass="text-primary link link-hover"
+                    class="inline-flex items-center gap-1 text-lg w-full justify-between "
                     classList={{
                       "after:content-['_↗']" : item()?.out
                     }}
@@ -110,7 +110,7 @@ export default props => {
                 <A 
                   href={item()?.path} 
                   activeClass="text-base-content bold"
-                  inactiveClass="text-secondary link link-hover"
+                  inactiveClass="text-primary link link-hover"
                   class="inline-flex items-center gap-1 text-lg rounded-full"
                   classList={{
                       "after:content-['_↗']" : item()?.out

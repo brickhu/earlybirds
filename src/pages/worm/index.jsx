@@ -33,13 +33,17 @@ export default (props) => {
          </div>
         </div>
       </div>
-      <div className="border-b border-current/20 flex justify-center-safe lg:justify-start">
+      {/* <div className="border-b border-current/20 flex justify-center-safe lg:justify-start">
         <Tabs items={menus} current={tab()} size="lg" variant = "border" onSelected={({item})=>setTab(item)} />
-      </div>
-      <Switch>
+      </div> */}
+      <div className="border-t border-current/20">
+        <Switch>
         <Match when={tab()?.key == menus[0].key}><Mints/></Match>
-        <Match when={tab()?.key == menus[1].key}> <Burns/></Match>
+        {/* <Match when={tab()?.key == menus[1].key}> <Burns/></Match> */}
       </Switch>
+
+      </div>
+      
       
     </div>
   )

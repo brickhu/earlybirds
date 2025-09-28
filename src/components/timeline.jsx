@@ -16,7 +16,7 @@ export const Timeline = props => {
       <div className="timeline-end w-full pt-1">
         <div className="flex justify-between text-sm pl-2 items-start">
           <div >{props?.text}</div>
-          <div className="flex items-center gap-2 min-w-24 justify-end">
+          <div className="flex items-center gap-2 min-w-26 justify-end">
             <p className="text-current/50 text-xs">{props?.time}</p>
             <a className="btn btn-ghost btn-circle btn-xs" href={`https://www.ao.link/#/message/${props?.id}`} target="_blank">
               <Icon icon="iconoir:open-new-window" />

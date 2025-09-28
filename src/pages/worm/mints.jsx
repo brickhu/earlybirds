@@ -13,7 +13,7 @@ export default (props) => {
   const {env} = useGlobal() 
   const { getTheClockDatetime } = useClock()
   const [mints,{refetch:refetchMints, hasMore,loadingMore,loadMore}] = cacheResource("mints-"+env?.wrom_pid,()=>createPagination(()=>({from:env?.wrom_pid,to:env?.checkin_pid}),fetchMints,{size:100}))
-  createEffect(()=>console.log(mints()))
+ 
   return(
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-8 items-stretch py-12">
       <div className="col-span-full">
@@ -31,8 +31,8 @@ export default (props) => {
                   <Row>
                     <Cell className="hidden lg:table-cell">
                       <Switch>
-                        <Match when={item.action == "Minted"}><div className="badge badge-soft badge-primary">Mint</div></Match>
-                        <Match when={item.action == "Burned"}><div className="badge badge-soft badge-secondary">Burn</div></Match>
+                        <Match when={item.action == "Minted"}><div className="badge badge-soft badge-info">Mint</div></Match>
+                        <Match when={item.action == "Burned"}><div className="badge badge-soft badge-warning">Burn</div></Match>
                       </Switch>
                     </Cell>
                     <Cell><Shorter value={item.address} length={6}/></Cell>

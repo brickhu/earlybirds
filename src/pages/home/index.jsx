@@ -91,8 +91,8 @@ export default () => {
       </div>
 
       <div className=' container flex flex-col items-center py-8'>
-        <div className='text-3xl lg:text-4xl pb-8'>Getting up early is the key to a successful, healthy life.</div>
-        <p>Studies have found that long-term early risers enjoy stronger longevity and vitality in their brain and nerve cells — a habit many successful people keep to maintain a healthy mind.</p>
+        <div className='text-4xl lg:text-6xl pb-8 uppercase text-center'>Getting up early is the key to a successful, healthy life.</div>
+        <p className='text-center'>Studies have found that long-term early risers enjoy stronger longevity and vitality in their brain and nerve cells — a habit many successful people keep to maintain a healthy mind.</p>
         <FaqContainer className="max-w-4xl">
           <For each={faqs}>
             {item=><FaqItem  title={item?.title} content={item?.content}/>}

@@ -8,12 +8,12 @@ export const Currency = props => {
     const fixed = n.toFixed(p?.fixed || 0);
     return {
       tooltip : String(n),
-      display : fixed > 0 ? String(fixed) : String(n)
+      display : fixed > 0 ? String(fixed) : String(n),
     }
   })
   return (
-    <div className="tooltip inline-block z-0 tabular-nums"  data-tip={result()?.tooltip}>
-      <span className={props?.class || props?.className}>{props?.symbol}{result()?.display}<Show when={props?.ticker}> {props?.ticker}</Show></span>
+    <div className="tooltip inline-block z-0 oldstyle-nums slashed-zero "  data-tip={result()?.tooltip}>
+      <span className={props?.class || props?.className}>{props?.symbol}<span classList={{"font-bold" : p?.value>0, "text-current/80" : p?.value<=0}}>{result()?.display}</span><Show when={props?.ticker}> <span className=" font-normal tracking-tighter">{props?.ticker}</span></Show></span>
     </div>
   )
 }
