@@ -1,10 +1,12 @@
 import { Icon } from "@iconify-icon/solid"
 import { BalanceItem } from "../../components/items"
 import { useUser } from "."
+import { useGlobal } from "../global"
 import { Show } from "solid-js"
 import { Currency } from "../../components/currency"
 export default props=>{
   const {arBalance, refetchArBalance,wormBalance, refetchWormBalance, pwrBalance } = useUser()
+  const {arProcess,wormProcess} = useGlobal()
   return(
     // <div className="flex items-center justify-between">
     //   <div className="flex items-center gap-4">
@@ -24,19 +26,19 @@ export default props=>{
       <div className="bg-base-100 p-2 rounded-field border border-base-300">
         <BalanceItem 
           name = "Warpped AR"
-          logo={"https://token-icons.s3.amazonaws.com/eth.png"}
+          logo={"http://arweave.net/"+arProcess()?.Logo}
           disableRefetch = {arBalance.loading}
           value={<Show when={arBalance.state == "ready"} fallback="..."><Currency value={arBalance()} precision={12} fixed={12}/></Show>}
-          ticker="$WAR"
+          ticker={`$${arProcess()?.Ticker}`}
           onRefetch={refetchArBalance}
         />
       </div>
        <div className="bg-base-100 p-2 rounded-field border border-base-300">
         <BalanceItem 
         name = "Earlybird's Worm Token"
-        logo={"https://token-icons.s3.amazonaws.com/eth.png"}
+        logo={"http://arweave.net/"+wormProcess()?.Logo}
         value={<Show when={wormBalance.state == "ready"} fallback="..."><Currency value={wormBalance()} precision={12} fixed={12}/></Show>}
-        ticker="$WORM"
+        ticker={`$${wormProcess()?.Ticker}`}
         disableRefetch = {wormBalance.loading}
         onRefetch={refetchWormBalance}
       />

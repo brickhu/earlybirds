@@ -124,14 +124,14 @@ export default props => {
           </Index>        
         </ul>
       </div>
-        <Show when={connected()} fallback={<button className="btn rounded-full" onClick={showConnector}>Connect</button>}>
+        <Show when={connected()} fallback={<button className="btn btn-neutral rounded-full" onClick={showConnector}>Connect</button>}>
           <label 
             htmlFor="profile-drawer" 
-            className="btn btn-circle drawer-button rounded-full"
+            className="btn btn-circle btn-sm drawer-button rounded-full"
             classList={{
               "skeleton" : profile.loading,
               "" : !profile.loading,
-              "border border-accent" : profile.state == "ready" && profile() !== null
+              "bg-primary" : profile.state == "ready" && profile() !== null
             }}
           >
             <Avatar username={address()} className="size-6"/>

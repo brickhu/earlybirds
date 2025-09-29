@@ -141,3 +141,18 @@ export function getDateKey(ts : number) {
   const d = new Date(ts)
   return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`
 }
+
+
+
+export function shortNumber(num : number,precision : number = 0,fixed = 0 ) {
+  const n = num / Math.pow(10, precision);
+  if (n >= 1e9) {
+    return (n / 1e9).toFixed(Math.max(3,fixed)) + 'b';  // 超过10亿
+  } else if (n >= 1e6) {
+    return (n / 1e6).toFixed(Math.max(2,fixed)) + 'm';  // 超过100万
+  } else if (n >= 1e3) {
+    return (n / 1e3).toFixed(Math.max(1,fixed)) + 'k';  // 超过1000
+  } else {
+    return n.toFixed(fixed);  // 小于1000
+  }
+}

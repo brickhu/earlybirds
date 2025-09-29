@@ -93,10 +93,10 @@ export default props => {
     <>
     <div 
       // style={style()}
-      class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-8 container mx-auto py-8  transition-all rounded-box bg-linear-to-b "
+      class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-8 container mx-auto py-10  transition-all rounded-box  "
       classList = {{
-        "from-base-300/50 to-base-300/0" : !checked(),
-        "from-primary/10 to-primary/0" : checked()
+        "bg-base-300 text-base-content" : !checked(),
+        "bg-primary/10 text-primary-content" : checked()
       }}
     >
       <div class="col-span-1 lg:col-span-8 flex flex-col items-center justify-center lg:items-start">
