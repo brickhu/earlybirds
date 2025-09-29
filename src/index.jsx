@@ -31,7 +31,7 @@ function App(props) {
       <Header />
       <main className='grow' id='app'>
         <ErrorBoundary fallback={ErrorFallback}>
-        <Suspense fallback="loading...">
+        <Suspense fallback={<div className='w-full h-full skeleton p-4 bg-base-200'>Loading...</div>}>
           {props.children}
         </Suspense>
         </ErrorBoundary>
@@ -44,7 +44,7 @@ function App(props) {
 
 
 render(() => (
-  <Suspense fallback="loading...">
+  <Suspense fallback={<div className='w-full h-full skeleton p-4 bg-base-200'>Loading...</div>}>
     <WalletProvider config={{
       permissions: [
         "ACCESS_ADDRESS","SIGN_TRANSACTION","DISPATCH","ACCESS_PUBLIC_KEY",

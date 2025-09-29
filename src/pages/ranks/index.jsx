@@ -17,12 +17,12 @@ export default (props) => {
           emoji : "✅",
           title : "Top Check-ins",
           data : ranks()?.top_checkins,
-          format : (v)=> v
+          format : (v)=> <b>{v}</b>
         },{
           emoji : "🐛",
           title : "Top Mintings",
           data : ranks()?.top_mints,
-          format : (v)=> <Currency value={v} precision={12} fixed={12} ticker="$WORM" />
+          format : (v)=> <Currency value={v} precision={12} fixed={6} ticker="$WORM" />
         }]}>
           {rank=><section>
             <Table>
@@ -40,7 +40,7 @@ export default (props) => {
                       <Row>
                         <Cell className="w-[2em]">{index()+1}</Cell>
                         <Cell>
-                          <div className=" truncate flex items-center gap-2 max-w-[40vw]">
+                          <div className=" truncate flex items-center gap-2 max-w-[40vw] text-ellipsis">
                           <Avatar username={i[0]} className=" size-6"/>
                           <span>{i[0]}</span>
                           </div>

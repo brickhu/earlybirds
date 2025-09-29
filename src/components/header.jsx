@@ -82,7 +82,7 @@ export default props => {
           </div>
           <ul
             tabindex="0"
-            class="menu dropdown-content panel rounded-box z-2 m-3 w-52 p-2 bg-base-200 ">
+            class="menu dropdown-content rounded-box bg-base-300/98 border border-base-300 shadow backdrop-blur-3xl">
             <Index each={navs()} fallback={<div>Loading...</div>}>
               {(item) => (
                 <li>
