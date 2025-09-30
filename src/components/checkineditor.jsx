@@ -288,7 +288,7 @@ export default props => {
             <div className="text-current/50 text-sm">{greeting()?.length || 0}/{maxLength} <Show when={greeting()?.length > maxLength || greeting()?.length <= 1}> <Icon icon="bxs:error" /></Show></div>
           </div>
           <div>
-            <Show when={allowable()} fallback={<span>Not within check-in hours(6-8 AM)</span>}>
+            <Show when={allowable()} fallback={<span>Check-in only 6-8 AM</span>}>
               <button 
                 className="btn btn-circle bg-[var(--color-fg)] border-[var(--color-fg)] disabled:border-transparent text-[var(--color-bg))] btn-lg"
                 disabled={posting() || greeting()?.length <= 1 || greeting()?.length > maxLength || isEditorFocused()}

@@ -49,7 +49,7 @@ export default props => {
         >
           <Switch>
             <Match when={checked()}><Icon icon="iconoir:check" /></Match>
-            <Match when={!checked()}><Icon icon="iconoir:sun-light" /></Match>
+            <Match when={!checked()}><Icon icon="iconoir:calendar" /></Match>
           </Switch>
         </div>
         <span className='text-current/60'>{date()}</span>
@@ -69,14 +69,14 @@ export default props => {
             </A>
           </Match>
           <Match when={!checked()}>
-            <span className='text-sm'>From 6-8 AM</span>
+            <span className='text-sm'>From 6-8 AM daily</span>
             <button 
               className='btn btn-neutral rounded-full w-full md:w-fit btn-xl md:btn-lg'
               use:walletConnectionCheck={HandleEarlyCheckin} 
               disabled={profile.loading}
               classList={{"skeleton":profile.loading}}
             >
-              Early Check-in <Icon icon="iconoir:arrow-right" />
+              Morning Check-In <Icon icon="iconoir:arrow-right" />
             </button>
           </Match>
         </Switch>

@@ -87,7 +87,12 @@ export default () => {
           </div>
         </div>
 
-        <Checkinbar/>
+        <Checkinbar onCheckedSuccessful={()=>{
+          batch(()=>{
+            refetchCheckinState()
+            refetchLatestCheckers()
+          })
+        }}/>
 
         <Status>
           <StatuBlock title="EarlyBirds" value={shortNumber(checkinState()?.players || 0)} loading={checkinState.loading} link="/ranks"/>
