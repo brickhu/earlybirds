@@ -76,13 +76,13 @@ export default props => {
           <Match when={!checked()}>
             <span className='text-sm'>From 6-8 AM daily</span>
             <button 
-              className='btn btn-neutral rounded-full w-full md:w-fit btn-xl md:btn-lg'
+              className='btn btn-primary rounded-full w-full md:w-fit btn-xl md:btn-lg'
               use:walletConnectionCheck={HandleEarlyCheckin} 
               disabled={profile.loading}
               classList={{"skeleton":profile.loading}}
             >
-              <Show when ={plan()&&plan()?.next} fallback={<>Start Check-in Challenge <Icon icon="iconoir:arrow-right" /></>}>
-                Check-In Later <Icon icon="iconoir:arrow-right" />
+              <Show when ={plan()&&plan()?.next} fallback={<>Start a Challenge <Icon icon="iconoir:arrow-right" /></>}>
+                Check-In & Earn <Icon icon="iconoir:arrow-right" />
               </Show>
             </button>
           </Match>

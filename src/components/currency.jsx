@@ -2,13 +2,13 @@
 import { createMemo, mergeProps,Show } from "solid-js"
 
 export const Currency = props => {
-  const p = mergeProps({ value: 0, precision: 1, fixed: 0 }, props);
+  const p = mergeProps({ value: 0, precision: 1,}, props);
   const result = createMemo(()=>{
     const n = (p?.value / Math.pow(10, p?.precision))
-    const fixed = n.toFixed(p?.fixed || 0);
+    const fixed = n.toFixed(p?.fixed || n?.length);
     return {
-      tooltip : String(n),
-      display : fixed > 0 ? String(fixed) : String(n),
+      tooltip : n > 0 ? n.toString() : "0",
+      display : n > 0 ? fixed.toString() : "0",
     }
   })
   return (

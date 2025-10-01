@@ -203,7 +203,7 @@ export default props =>{
             <div className="w-full flex items-center justify-between">
               <div>
                 <p className="text-xs text-current/60 uppercase">Balance</p>
-                <p><Show when={arBalance?.state== "ready"} fallback={<Spinner/>}><Currency value={arBalance()} precision={12} ticker="$AO"/></Show></p>
+                <p><Show when={arBalance?.state== "ready"} fallback={<Spinner/>}><Currency value={arBalance()} precision={12} fixed={2} ticker="$AO"/></Show></p>
               </div>
               <button className="btn btn-primary" disabled={creating() || !quantity() || arBalance.loading || arBalance()<=0} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
             </div>
@@ -219,17 +219,7 @@ export default props =>{
             >
                 {updating()?"Updating...":"Update"}
             </button>
-            {/* <div>Add a 1 $WAR deposit to update</div>
-            <button 
-              className="btn btn-primary" 
-              onClick={()=>HandleUpdatePlan(currentPlan()?.id)}
-              disabled={updating()}
-              classList={{
-                "skeleton" : updating()
-              }}
-            >
-              {updating()?"Updating...":"Update"}
-            </button> */}
+
           </Match>
         </Switch>
         

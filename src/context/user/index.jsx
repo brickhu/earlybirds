@@ -212,23 +212,23 @@ export const UserProvider = (props) => {
                           <Cols class="text-xs">
                             <Col class="text-xs text-left">Fund</Col>
                             <Col class="text-xs text-right">Available</Col>
-                            <Col class="text-xs text-right">Total</Col>
                             <Col class="text-xs text-right">Claimed</Col>
+                            <Col class="text-xs text-right">Total</Col>
                           </Cols>
                         </Head>
                         <Body className="text-xs">
                           <Row>
                             <Cell class="text-xs text-left">Deposit</Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[0]} precision={12} /></Cell>
-                            <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[2]} precision={12} /></Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
                           </Row>
                           
                           <Row>
                             <Cell class="text-xs text-left">Rewards</Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
-                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
-                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[2]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[1]} precision={12} /></Cell>
                           </Row>
                         </Body>
                       </Table>
