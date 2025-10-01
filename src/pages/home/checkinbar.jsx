@@ -1,5 +1,5 @@
 
-import { Switch, Match, createSignal, createEffect, batch, createResource } from "solid-js"
+import { Switch, Match, createSignal, createEffect, batch, createResource, createMemo } from "solid-js"
 import { useGlobal, useUser, useClock } from "../../context"
 import { useWallet } from "arwallet-solid-kit"
 import { Icon } from "@iconify-icon/solid"
@@ -30,12 +30,17 @@ export default props => {
   let _checkineditor
   let _voice
   const { walletConnectionCheck,address} = useWallet()
-  const {time,date} = useClock()
+  const {time,date,timestamp} = useClock()
   const {toast,checkinProcess,setStyle} = useGlobal()
   const {profile , refetchProfile , plan , latest, openPlanner, refetchArBalance, refetchWormBalance} = useUser()
   const [color,setColor] = createSignal()
   const [checked,setChecked] = createSignal(false)
   const [checkin,setCheckin] = createSignal()
+
+  // const renderCheckinButton = createMemo(()=>{
+
+  //   return()
+  // })
 
   const DateBlock = () => {
     return(
@@ -76,7 +81,9 @@ export default props => {
               disabled={profile.loading}
               classList={{"skeleton":profile.loading}}
             >
-              Morning Check-In <Icon icon="iconoir:arrow-right" />
+              <Show when ={plan()&&plan()?.next} fallback={<>Start Check-in Challenge <Icon icon="iconoir:arrow-right" /></>}>
+                Check-In Later <Icon icon="iconoir:arrow-right" />
+              </Show>
             </button>
           </Match>
         </Switch>

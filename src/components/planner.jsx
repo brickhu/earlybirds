@@ -6,6 +6,7 @@ import { displayZoneTime, toBalanceQuantity } from "../lib/units";
 import { useGlobal,useClock,useUser } from "../context";
 import { Shorter } from "./shorter";
 import { Currency } from "./currency";
+import Spinner from "./spinner";
 
 
 
@@ -27,7 +28,7 @@ export default props =>{
    // const [created,setCreated] = createSignal(false)
   const { wallet,walletConnectionCheck} = useWallet()
   const { arProcess,env,toast } = useGlobal()
-  const { profile, refetchProfile,plan } = useUser()
+  const { profile, refetchProfile,plan,arBalance } = useUser()
 
   const totalEarn = createMemo(()=>{
     if(quantity()<1||days()<30 || !quantity()){ return 0}
@@ -142,7 +143,7 @@ export default props =>{
   
   return(
     <ModalBox id="eb_planner" ref={_ref_planner} closable={!creating()} className="w-[360px]">
-      <ModalTitle>{mode() == modes.UPDATE? "Update your plan":"Create Check-in Plan"}</ModalTitle>
+      <ModalTitle>{mode() == modes.UPDATE? "Update your challenge":"Start a Check-in Challenge"}</ModalTitle>
       <ModalContent>
         <Switch>
             <Match when={mode()==modes.CREATE}>
@@ -151,7 +152,7 @@ export default props =>{
                   <legend className="fieldset-legend">Deposit</legend>
                   <label className="input">
                     <input type="text" className="grow" placeholder="" value={quantity()} disabled={creating()} onChange={(e)=>setQuantity(e.target.value)} />
-                    <span className=" text-current/50">$wAR</span>
+                    <span className=" text-current/50">$AO</span>
                   </label>
                 </fieldset>
                 <fieldset className="fieldset">
@@ -202,9 +203,9 @@ export default props =>{
             <div className="w-full flex items-center justify-between">
               <div>
                 <p className="text-xs text-current/60 uppercase">Balance</p>
-                <p><Currency value={0} precision={12} ticker="$WAR"/></p>
+                <p><Show when={arBalance?.state== "ready"} fallback={<Spinner/>}><Currency value={arBalance()} precision={12} ticker="$AO"/></Show></p>
               </div>
-              <button className="btn btn-primary" disabled={creating() || !quantity()} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
+              <button className="btn btn-primary" disabled={creating() || !quantity() || arBalance.loading || arBalance()<=0} use:walletConnectionCheck={HandleCreatePlan}>{creating()?"Creating..":"Create"}</button>
             </div>
           </Match>
           <Match when={mode()==modes.UPDATE}>

@@ -196,7 +196,7 @@ export const UserProvider = (props) => {
                         <Match when={!profile()?.plan_detail}>
                           <div className="flex items-center justify-between w-full">
                             <p>No active plan yet</p>
-                            <button className="btn btn-sm btn-primary">Create new</button>
+                            <button className="btn btn-sm btn-primary" onClick={handlePlan}>Create new</button>
                           </div>
                           
                         </Match>
@@ -213,6 +213,7 @@ export const UserProvider = (props) => {
                             <Col class="text-xs text-left">Fund</Col>
                             <Col class="text-xs text-right">Available</Col>
                             <Col class="text-xs text-right">Total</Col>
+                            <Col class="text-xs text-right">Claimed</Col>
                           </Cols>
                         </Head>
                         <Body className="text-xs">
@@ -220,9 +221,12 @@ export const UserProvider = (props) => {
                             <Cell class="text-xs text-left">Deposit</Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[0]} precision={12} /></Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.funds?.[1]} precision={12} /></Cell>
                           </Row>
+                          
                           <Row>
                             <Cell class="text-xs text-left">Rewards</Cell>
+                            <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
                             <Cell class="text-xs text-right"><Currency value={profile()?.rewards?.[0]} precision={12} /></Cell>
                           </Row>
